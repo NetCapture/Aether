@@ -9,4 +9,4 @@
 
 ## 鸣谢
 
-* [MegatronKing](https://github.com/MegatronKing)
+* [MegatronKing](https://github.com/MegatronKing) - [NetBare](https://github.com/MegatronKing/NetBare) 
