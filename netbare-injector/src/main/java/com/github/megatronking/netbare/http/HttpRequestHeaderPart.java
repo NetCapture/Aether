@@ -134,7 +134,7 @@ public final class HttpRequestHeaderPart extends HttpHeaderPart {
         /**
          * Add a http header.
          *
-         * @param name  The name of the header.
+         * @param name The name of the header.
          * @param value The value of the header.
          * @return The same builder.
          */
@@ -147,7 +147,7 @@ public final class HttpRequestHeaderPart extends HttpHeaderPart {
          * Replace the http header by name. If the name has multiple values, the values will be all
          * removed.
          *
-         * @param name  The name of the header.
+         * @param name The name of the header.
          * @param value The value of the header.
          * @return The same builder.
          */
@@ -160,10 +160,11 @@ public final class HttpRequestHeaderPart extends HttpHeaderPart {
          * Update the http header by name and index. If the index of values not exists, then do
          * nothing.
          *
-         * @param name  The name of the header.
+         * @param name The name of the header.
          * @param value The value of the header.
          * @param index The value index in list.
          * @return The same builder.
+         *
          * @see #updateOrAddHeader(String, String, int)
          */
         @Override
@@ -175,10 +176,11 @@ public final class HttpRequestHeaderPart extends HttpHeaderPart {
          * Update the http header by name and index. If the index of values not exists, then append
          * a new header.
          *
-         * @param name  The name of the header.
+         * @param name The name of the header.
          * @param value The value of the header.
          * @param index The value index in list.
          * @return The same builder.
+         *
          * @see #updateHeader(String, String, int)
          */
         @Override
