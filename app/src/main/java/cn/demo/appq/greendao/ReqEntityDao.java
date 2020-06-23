@@ -52,6 +52,7 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         public final static Property RespMessage = new Property(25, String.class, "respMessage", false, "RESP_MESSAGE");
         public final static Property RespCode = new Property(26, Integer.class, "respCode", false, "RESP_CODE");
         public final static Property IsWebSocket = new Property(27, Boolean.class, "isWebSocket", false, "IS_WEB_SOCKET");
+        public final static Property NetType = new Property(28, String.class, "netType", false, "NET_TYPE");
     }
 
 
@@ -94,7 +95,8 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
                 "\"RESP_CONTENT\" TEXT," + // 24: respContent
                 "\"RESP_MESSAGE\" TEXT," + // 25: respMessage
                 "\"RESP_CODE\" INTEGER," + // 26: respCode
-                "\"IS_WEB_SOCKET\" INTEGER);"); // 27: isWebSocket
+                "\"IS_WEB_SOCKET\" INTEGER," + // 27: isWebSocket
+                "\"NET_TYPE\" TEXT);"); // 28: netType
     }
 
     /** Drops the underlying database table. */
@@ -246,6 +248,11 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         if (isWebSocket != null) {
             stmt.bindLong(28, isWebSocket ? 1L: 0L);
         }
+ 
+        String netType = entity.getNetType();
+        if (netType != null) {
+            stmt.bindString(29, netType);
+        }
     }
 
     @Override
@@ -391,6 +398,11 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         if (isWebSocket != null) {
             stmt.bindLong(28, isWebSocket ? 1L: 0L);
         }
+ 
+        String netType = entity.getNetType();
+        if (netType != null) {
+            stmt.bindString(29, netType);
+        }
     }
 
     @Override
@@ -428,7 +440,8 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
             cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // respContent
             cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // respMessage
             cursor.isNull(offset + 26) ? null : cursor.getInt(offset + 26), // respCode
-            cursor.isNull(offset + 27) ? null : cursor.getShort(offset + 27) != 0 // isWebSocket
+            cursor.isNull(offset + 27) ? null : cursor.getShort(offset + 27) != 0, // isWebSocket
+            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28) // netType
         );
         return entity;
     }
@@ -463,6 +476,7 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         entity.setRespMessage(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
         entity.setRespCode(cursor.isNull(offset + 26) ? null : cursor.getInt(offset + 26));
         entity.setIsWebSocket(cursor.isNull(offset + 27) ? null : cursor.getShort(offset + 27) != 0);
+        entity.setNetType(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
      }
     
     @Override

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao' // 应用插件
 greendao {
     // 指定数据库schema版本号，迁移等操作会用到
-    schemaVersion 1
+    schemaVersion 2
     // 设置生成数据库文件的目录，默认是在build中，可以将生成的文件放到我们的java目录中
     targetGenDir 'src/main/java'
     // 设置生成的数据库相关文件的包名，默认为entity所在的包名

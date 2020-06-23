@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.github.megatronking.netbare.http.HttpIndexedInterceptor;
 import com.github.megatronking.netbare.http.HttpInterceptor;
 import com.github.megatronking.netbare.http.HttpInterceptorFactory;
@@ -91,7 +92,8 @@ public class Ainterceptor extends HttpIndexedInterceptor {
                     null,
                     null,
                     null,
-                    null);
+                    null,
+                    NetworkUtils.getNetworkType().name());
             DBManager.getInstance().getReqEntityDao().insert(reqEntity);
         }
         chain.process(buffer);
