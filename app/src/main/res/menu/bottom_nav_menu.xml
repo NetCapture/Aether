@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_serch"
+        android:title="搜索"
+        android:visible="true"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
 
 
+    <!--    <item-->
+    <!--        android:id="@+id/action_guide"-->
+    <!--        android:orderInCategory="100"-->
+    <!--        android:title="帮助"-->
+    <!--        app:showAsAction="never" />-->
+    <!--    <item-->
+    <!--        android:id="@+id/action_exit"-->
+    <!--        android:orderInCategory="101"-->
+    <!--        android:title="退出"-->
+    <!--        app:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/update"
+        android:icon="@drawable/ic_restore"
+        android:title="刷新"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView" />
 
 </menu>

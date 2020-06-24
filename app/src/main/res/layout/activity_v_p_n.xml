@@ -29,6 +29,7 @@
         app:layout_constraintTop_toBottomOf="@+id/appbar">
 
         <TextView
+            android:id="@+id/tv_notice"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="40dp"
@@ -40,12 +41,31 @@
 4. 点击info，电脑打开提示链接\n
 5. 需注意手机与电脑请保持在同一局域网内
 "
-            android:textSize="16sp"
             android:textColor="#000000"
+            android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
         </TextView>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/srl_ref"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_logs"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+
     </android.support.constraint.ConstraintLayout>
 
 
