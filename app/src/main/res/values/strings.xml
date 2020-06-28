@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VPN抓包助手</string>
+    <string name="app_name">抓包助手</string>
     <string name="title_activity_v_p_n">VPNActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
