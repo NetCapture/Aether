@@ -81,6 +81,15 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
         findView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(netBarePresenter.isActive()){
+            tv_notice.setVisibility(View.GONE);
+            srl_ref.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void findView() {
         rv_logs = findViewById(R.id.rv_logs);
         tv_notice = findViewById(R.id.tv_notice);

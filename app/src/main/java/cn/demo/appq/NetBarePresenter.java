@@ -68,6 +68,14 @@ public class NetBarePresenter implements BasePresenter {
         }
     }
 
+    /**
+     * 当前VPN是否已经开启
+     * @return
+     */
+    public boolean isActive(){
+        return mNetBare.isActive();
+    }
+
     public void stopVpn() {
         if (mNetBare.isActive()) {
             // 启动NetBare服务
