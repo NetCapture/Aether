@@ -101,7 +101,6 @@ public class HttpRequest extends Request {
         return mSession.method;
     }
 
-
     /**
      * Returns this request's http protocol, such as {@link HttpProtocol#HTTP_1_1} or
      * {@link HttpProtocol#HTTP_1_0}.

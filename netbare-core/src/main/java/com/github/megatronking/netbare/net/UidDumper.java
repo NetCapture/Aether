@@ -73,14 +73,9 @@ public final class UidDumper {
         this.mDumpers.put(Protocol.TCP, new NetDumper[]{
                 new NetDumper("/proc/net/tcp6", localIp, IPV6_PATTERN),
                 new NetDumper("/proc/net/tcp", localIp, IPV4_PATTERN)});
-        this.mDumpers.put(Protocol.UDP, new NetDumper[]{
-                        new NetDumper("/proc/net/udp6", localIp, IPV6_PATTERN),
-                        new NetDumper("/proc/net/udp", localIp, IPV4_PATTERN),
-                        //  这两个也是UDP
-                        new NetDumper("/proc/net/raw6", localIp, IPV6_PATTERN),
-                        new NetDumper("/proc/net/raw", localIp, IPV4_PATTERN)
-                }
-        );
+        this.mDumpers.put(Protocol.UDP, new NetDumper[] {
+                new NetDumper("/proc/net/udp6", localIp, IPV6_PATTERN),
+                new NetDumper("/proc/net/udp", localIp, IPV4_PATTERN)});
     }
 
     public void request(final Session session) {

@@ -1,6 +1,7 @@
 package cn.demo.appq.utils;
 
-import com.github.megatronking.netbare.L;
+
+import com.blankj.utilcode.util.Utils;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -17,7 +18,7 @@ public class DBManager {
         if (instance == null) {
             synchronized (DBManager.class) {
                 if (instance == null) {
-                    Database db = new DaoMaster.DevOpenHelper(L.getContext(null), "log_db").getWritableDb();
+                    Database db = new DaoMaster.DevOpenHelper(Utils.getApp(), "log_db").getWritableDb();
                     DaoMaster daoMaster = new DaoMaster(db);
                     //汇总APP使用流量排行
                     daoMaster.getDatabase().execSQL(

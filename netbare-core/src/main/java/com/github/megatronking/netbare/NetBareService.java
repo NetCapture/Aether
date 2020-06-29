@@ -101,7 +101,6 @@ public abstract class NetBareService extends VpnService {
         stopNetBare();
 
         NetBareConfig config = NetBare.get().getConfig();
-        L.i("NetBareService...startNetBare  config:"+config);
         if (config == null) {
             throw new IllegalArgumentException("Must start NetBareService with a " +
                     "NetBareConfig");

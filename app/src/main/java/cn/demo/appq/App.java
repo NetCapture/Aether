@@ -3,7 +3,6 @@ package cn.demo.appq;
 import android.app.Application;
 import android.content.Context;
 
-import com.github.megatronking.netbare.L;
 import com.github.megatronking.netbare.NetBare;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.ssl.JKS;
@@ -17,16 +16,13 @@ public class App extends Application {
 
     private static JKS mJKS = null;
 
-    private static Context mContext = L.getContext(null);
+    private static Context mContext;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         mContext = this;
-        L.i("=======================================================");
-        L.i("===============Application.onCreate===============");
-        L.i("=======================================================");
         // 创建自签证书
         mJKS = new JKS(this, JSK_ALIAS, JSK_ALIAS.toCharArray(), JSK_ALIAS, JSK_ALIAS,
                 JSK_ALIAS, JSK_ALIAS, JSK_ALIAS);

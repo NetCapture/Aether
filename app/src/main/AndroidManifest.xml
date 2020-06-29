@@ -58,7 +58,10 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".VPNActivity">
+        <activity
+            android:name=".VPNActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="fullUser">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
