@@ -11,11 +11,11 @@ greendao {
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    buildToolsVersion "29.0.3"
     defaultConfig {
-        applicationId "cn.demo.appq"
+        applicationId "com.good.vpn"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
     }
