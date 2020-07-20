@@ -53,6 +53,8 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         public final static Property RespCode = new Property(26, Integer.class, "respCode", false, "RESP_CODE");
         public final static Property IsWebSocket = new Property(27, Boolean.class, "isWebSocket", false, "IS_WEB_SOCKET");
         public final static Property NetType = new Property(28, String.class, "netType", false, "NET_TYPE");
+        public final static Property RequestBodyOffset = new Property(29, int.class, "requestBodyOffset", false, "REQUEST_BODY_OFFSET");
+        public final static Property ResponseBodyOffset = new Property(30, int.class, "responseBodyOffset", false, "RESPONSE_BODY_OFFSET");
     }
 
 
@@ -96,7 +98,9 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
                 "\"RESP_MESSAGE\" TEXT," + // 25: respMessage
                 "\"RESP_CODE\" INTEGER," + // 26: respCode
                 "\"IS_WEB_SOCKET\" INTEGER," + // 27: isWebSocket
-                "\"NET_TYPE\" TEXT);"); // 28: netType
+                "\"NET_TYPE\" TEXT," + // 28: netType
+                "\"REQUEST_BODY_OFFSET\" INTEGER NOT NULL ," + // 29: requestBodyOffset
+                "\"RESPONSE_BODY_OFFSET\" INTEGER NOT NULL );"); // 30: responseBodyOffset
     }
 
     /** Drops the underlying database table. */
@@ -253,6 +257,8 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         if (netType != null) {
             stmt.bindString(29, netType);
         }
+        stmt.bindLong(30, entity.getRequestBodyOffset());
+        stmt.bindLong(31, entity.getResponseBodyOffset());
     }
 
     @Override
@@ -403,6 +409,8 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         if (netType != null) {
             stmt.bindString(29, netType);
         }
+        stmt.bindLong(30, entity.getRequestBodyOffset());
+        stmt.bindLong(31, entity.getResponseBodyOffset());
     }
 
     @Override
@@ -441,7 +449,9 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
             cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // respMessage
             cursor.isNull(offset + 26) ? null : cursor.getInt(offset + 26), // respCode
             cursor.isNull(offset + 27) ? null : cursor.getShort(offset + 27) != 0, // isWebSocket
-            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28) // netType
+            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // netType
+            cursor.getInt(offset + 29), // requestBodyOffset
+            cursor.getInt(offset + 30) // responseBodyOffset
         );
         return entity;
     }
@@ -477,6 +487,8 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         entity.setRespCode(cursor.isNull(offset + 26) ? null : cursor.getInt(offset + 26));
         entity.setIsWebSocket(cursor.isNull(offset + 27) ? null : cursor.getShort(offset + 27) != 0);
         entity.setNetType(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
+        entity.setRequestBodyOffset(cursor.getInt(offset + 29));
+        entity.setResponseBodyOffset(cursor.getInt(offset + 30));
      }
     
     @Override

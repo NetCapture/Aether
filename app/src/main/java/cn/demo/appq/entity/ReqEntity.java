@@ -40,17 +40,18 @@ public class ReqEntity {
     private Integer respCode;
     private Boolean isWebSocket;
     private String netType;
+    private int requestBodyOffset;
+    private int responseBodyOffset;
 
-    @Generated(hash = 28845683)
+    @Generated(hash = 2027405108)
     public ReqEntity(Long id, String sessionId, String appName, String appPackage,
-                     String appVersion, String appVersionCode, String url, String host,
-                     Integer port, Integer index, String ip, String protocol,
-                     String httpProtocol, String method, String path, Boolean isHttps,
-                     Long time, Integer uid, Integer length, Integer streamId,
-                     String requestHeaders, String clientHttp2Settings,
-                     String peerHttp2Settings, String reqContent, String respContent,
-                     String respMessage, Integer respCode, Boolean isWebSocket,
-                     String netType) {
+            String appVersion, String appVersionCode, String url, String host, Integer port,
+            Integer index, String ip, String protocol, String httpProtocol, String method,
+            String path, Boolean isHttps, Long time, Integer uid, Integer length,
+            Integer streamId, String requestHeaders, String clientHttp2Settings,
+            String peerHttp2Settings, String reqContent, String respContent,
+            String respMessage, Integer respCode, Boolean isWebSocket, String netType,
+            int requestBodyOffset, int responseBodyOffset) {
         this.id = id;
         this.sessionId = sessionId;
         this.appName = appName;
@@ -80,6 +81,8 @@ public class ReqEntity {
         this.respCode = respCode;
         this.isWebSocket = isWebSocket;
         this.netType = netType;
+        this.requestBodyOffset = requestBodyOffset;
+        this.responseBodyOffset = responseBodyOffset;
     }
 
     @Generated(hash = 1573136)
@@ -316,6 +319,30 @@ public class ReqEntity {
 
     public void setNetType(String netType) {
         this.netType = netType;
+    }
+
+    public int getRequestBodyOffset() {
+        return this.requestBodyOffset;
+    }
+
+    public void setRequestBodyOffset(int requestBodyOffset) {
+        this.requestBodyOffset = requestBodyOffset;
+    }
+
+    public int getResponseBodyOffset() {
+        return this.responseBodyOffset;
+    }
+
+    public void setResponseBodyOffset(int responseBodyOffset) {
+        this.responseBodyOffset = responseBodyOffset;
+    }
+
+    public void setRequestBodyOffset(Integer requestBodyOffset) {
+        this.requestBodyOffset = requestBodyOffset;
+    }
+
+    public void setResponseBodyOffset(Integer responseBodyOffset) {
+        this.responseBodyOffset = responseBodyOffset;
     }
 
 

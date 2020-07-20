@@ -57,7 +57,8 @@ public class Ainterceptor extends HttpIndexedInterceptor {
                 String reqContent = entity.getReqContent();
                 if (reqContent == null) {
                     entity.setRespContent(IOUtils.byteBuffer2String(buffer.asReadOnlyBuffer()));
-                } else {
+                } else if (reqContent.length() < 1024 * 1024 * 5) {
+                    //数据体已经大于5m,就不处理了。
                     entity.setRespContent(reqContent + IOUtils.byteBuffer2String(buffer.asReadOnlyBuffer()));
                 }
             }
@@ -95,7 +96,9 @@ public class Ainterceptor extends HttpIndexedInterceptor {
                     null,
                     null,
                     null,
-                    NetworkUtils.getNetworkType().name());
+                    NetworkUtils.getNetworkType().name(),
+                    request.requestBodyOffset(),
+                    0);
             DBManager.getInstance().getReqEntityDao().insert(reqEntity);
         }
         chain.process(buffer);
@@ -114,11 +117,14 @@ public class Ainterceptor extends HttpIndexedInterceptor {
         if (reqEntities != null && reqEntities.size() > 0) {
             ReqEntity entity = reqEntities.get(0);
             entity.setRespCode(response.code());
+            entity.setResponseBodyOffset(response.responseBodyOffset());
+            entity.setRequestBodyOffset(response.requestBodyOffset());
             if (RECORD_REQUEST_BODY) {
                 String s = entity.getRespContent();
                 if (s == null) {
                     entity.setRespContent(IOUtils.byteBuffer2String(buffer.asReadOnlyBuffer()));
-                } else {
+                } else if (s.length() < 1024 * 1024 * 5) {
+                    //数据体已经大于5m,就不处理了。
                     entity.setRespContent(s + IOUtils.byteBuffer2String(buffer.asReadOnlyBuffer()));
                 }
             }
