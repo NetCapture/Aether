@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.GsonUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.github.megatronking.netbare.http.HttpIndexedInterceptor;
 import com.github.megatronking.netbare.http.HttpInterceptor;
@@ -28,7 +29,7 @@ public class Ainterceptor extends HttpIndexedInterceptor {
 
 
     private static final String TAG = "Ainterceptor";
-    private static final boolean RECORD_REQUEST_BODY = false;
+    private static final boolean RECORD_REQUEST_BODY = true;
 
     public static HttpInterceptorFactory createFactory(Context context) {
         return new HttpInterceptorFactory() {
@@ -86,7 +87,7 @@ public class Ainterceptor extends HttpIndexedInterceptor {
                     request.uid(),
                     buffer.limit(),
                     request.streamId(),
-                    request.requestHeaders().toString(),
+                    GsonUtils.toJson(request.requestHeaders()),
                     "",
                     "",
                     RECORD_REQUEST_BODY ? IOUtils.byteBuffer2String(buffer.asReadOnlyBuffer()) : "",

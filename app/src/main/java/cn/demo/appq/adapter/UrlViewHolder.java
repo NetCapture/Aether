@@ -1,17 +1,20 @@
 package cn.demo.appq.adapter;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.TimeUtils;
 
 import java.util.Date;
 
 import cn.demo.appq.R;
+import cn.demo.appq.activity.DescriptionActivity;
 import cn.demo.appq.entity.ReqEntity;
 
 public class UrlViewHolder extends RecyclerView.ViewHolder {
@@ -26,15 +29,23 @@ public class UrlViewHolder extends RecyclerView.ViewHolder {
         tv_url = itemView.findViewById(R.id.tv_url);
     }
 
-    public void setData(ReqEntity data) {
+    public void setData(final ReqEntity data) {
         if (data == null) {
             return;
         }
         iv_icon.setImageDrawable(AppUtils.getAppIcon(data.getAppPackage()));
-        tv_status.setText(new StringBuilder()
-                .append("Status:").append(data.getRespCode())
-                .append(" Size:").append(data.getLength())
-                .append(" Time:").append(TimeUtils.date2String(new Date(data.getTime()), "yyyy-MM-dd HH:mm:ss")).toString());
+        tv_status.setText("Status:" + data.getRespCode() +
+                " Size:" + data.getLength() +
+                " Time:" + TimeUtils.date2String(new Date(data.getTime()), "yyyy-MM-dd HH:mm:ss"));
         tv_url.setText(data.getUrl());
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle options = new Bundle();
+                options.putLong("id", data.getId());
+                ActivityUtils.startActivity(options, DescriptionActivity.class);
+            }
+        });
     }
 }

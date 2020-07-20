@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_fanghzou"
+        android:orderInCategory="100"
+        android:title="方舟解码"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_qianfan"
+        android:orderInCategory="101"
+        android:title="千帆解码"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_nil"
+        android:orderInCategory="101"
+        android:title="禁用解码"
+        app:showAsAction="never" />
+</menu>

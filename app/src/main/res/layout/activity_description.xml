@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cn.demo.appq.activity.DescriptionActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/sw_rfl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/appbar">
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_req_header"
+                    style="@style/req_desc_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Req Header:"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_req_header_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Req Content:"
+                    app:layout_constraintTop_toBottomOf="@id/tv_req_header" />
+
+                <TextView
+                    android:id="@+id/tv_req_content"
+                    style="@style/req_desc_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Req Content:"
+                    app:layout_constraintTop_toBottomOf="@id/tv_req_header_value" />
+
+                <TextView
+                    android:id="@+id/tv_req_content_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Req Content:"
+                    app:layout_constraintTop_toBottomOf="@id/tv_req_content" />
+
+                <!--responce-->
+
+
+                <TextView
+                    android:id="@+id/tv_resp_code"
+                    style="@style/req_desc_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="resp code:"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_req_content_value" />
+
+
+                <TextView
+                    android:id="@+id/tv_resp_header"
+                    style="@style/req_desc_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="resp Header:"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_resp_code" />
+
+                <TextView
+                    android:id="@+id/tv_resp_header_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="resp Content:"
+                    app:layout_constraintTop_toBottomOf="@id/tv_resp_header" />
+
+                <TextView
+                    android:id="@+id/tv_resp_content"
+                    style="@style/req_desc_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="resp Content:"
+                    app:layout_constraintTop_toBottomOf="@id/tv_resp_header_value" />
+
+                <TextView
+                    android:id="@+id/tv_resp_content_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="resp Content:"
+                    app:layout_constraintTop_toBottomOf="@id/tv_resp_content" />
+
+
+                <android.support.constraint.Group
+                    android:id="@+id/group_resp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="tv_resp_code,tv_resp_content,tv_resp_content_value,tv_resp_header,tv_resp_header_value" />
+            </android.support.constraint.ConstraintLayout>
+        </ScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</android.support.constraint.ConstraintLayout>
