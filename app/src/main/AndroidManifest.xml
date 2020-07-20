@@ -59,7 +59,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".VPNActivity"
+            android:name=".activity.VPNActivity"
             android:configChanges="orientation"
             android:screenOrientation="fullUser">
             <intent-filter>
@@ -70,7 +70,7 @@
         </activity>
 
         <service
-            android:name=".AppService"
+            android:name=".service.AppService"
             android:permission="android.permission.BIND_VPN_SERVICE">
             <intent-filter>
                 <action android:name="android.net.VpnService" />

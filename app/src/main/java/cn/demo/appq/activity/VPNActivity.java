@@ -1,4 +1,4 @@
-package cn.demo.appq;
+package cn.demo.appq.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -24,8 +24,10 @@ import com.github.megatronking.netbare.NetBareListener;
 
 import java.util.List;
 
+import cn.demo.appq.R;
 import cn.demo.appq.adapter.UrlAdapter;
 import cn.demo.appq.entity.ReqEntity;
+import cn.demo.appq.presenter.NetBarePresenter;
 import cn.demo.appq.utils.DBManager;
 import cn.demo.appq.view.NetBareView;
 

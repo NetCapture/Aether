@@ -1,4 +1,4 @@
-package cn.demo.appq;
+package cn.demo.appq.service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -11,6 +11,9 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.github.megatronking.netbare.NetBareService;
+
+import cn.demo.appq.R;
+import cn.demo.appq.activity.VPNActivity;
 
 public class AppService extends NetBareService {
 

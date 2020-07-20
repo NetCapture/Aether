@@ -1,4 +1,4 @@
-package cn.demo.appq;
+package cn.demo.appq.Interceptor;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import cn.demo.appq.App;
 import cn.demo.appq.entity.ReqEntity;
 import cn.demo.appq.greendao.ReqEntityDao;
 import cn.demo.appq.utils.DBManager;

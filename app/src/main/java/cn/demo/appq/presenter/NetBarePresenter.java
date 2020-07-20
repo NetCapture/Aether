@@ -1,4 +1,4 @@
-package cn.demo.appq;
+package cn.demo.appq.presenter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,8 +14,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.demo.appq.App;
+import cn.demo.appq.Interceptor.Ainterceptor;
 import cn.demo.appq.entity.ReqEntity;
 import cn.demo.appq.greendao.ReqEntityDao;
+import cn.demo.appq.presenter.BasePresenter;
 import cn.demo.appq.utils.DBManager;
 import cn.demo.appq.view.NetBareView;
 
