@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.ArrayUtils;
 import com.blankj.utilcode.util.GsonUtils;
 
 import java.util.Map;
@@ -105,9 +104,10 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
     }
 
     private void update(ReqEntity entity) {
-        byte[] bytes = entity.getReqContent().getBytes();
-        String content = new String(ArrayUtils.subArray(bytes, 0, bytes.length));
-        tvReqContentValue.setText(content);
+        String reqContent = entity.getReqContent();
+        if (reqContent != null) {
+            tvReqContentValue.setText(reqContent);
+        }
         Map<Object, Object> map = GsonUtils.fromJson(entity.getRequestHeaders(), Map.class);
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<Object, Object> entry :
@@ -120,9 +120,10 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
         }
         tvReqHeaderValue.setText(stringBuilder.toString());
         tvRespHeaderValue.setText(stringBuilder.toString());
-        byte[] bytes2 = entity.getRespContent().getBytes();
-        String content2 = new String(ArrayUtils.subArray(bytes2, 0, bytes2.length));
-        tvRespContentValue.setText(content2);
+        String respContent = entity.getRespContent();
+        if (respContent != null) {
+            tvRespContentValue.setText(respContent);
+        }
         tvRespCode.setText("Resp Code:" + entity.getRespCode());
     }
 

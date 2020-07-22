@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.github.megatronking.netbare.NetBare;
 import com.github.megatronking.netbare.NetBareConfig;
 import com.github.megatronking.netbare.NetBareListener;
+import com.github.megatronking.netbare.http.HttpInjectInterceptor;
 import com.github.megatronking.netbare.http.HttpInterceptorFactory;
 import com.github.megatronking.netbare.ssl.JKS;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 import cn.demo.appq.App;
 import cn.demo.appq.Interceptor.Ainterceptor;
+import cn.demo.appq.Interceptor.TestHttpInject;
 import cn.demo.appq.entity.ReqEntity;
 import cn.demo.appq.greendao.ReqEntityDao;
 import cn.demo.appq.presenter.BasePresenter;
@@ -88,7 +90,8 @@ public class NetBarePresenter implements BasePresenter {
 
     private List<HttpInterceptorFactory> interceptorFactories() {
         List<HttpInterceptorFactory> hfs = new ArrayList<>();
-        hfs.add(Ainterceptor.createFactory(activity.getApplicationContext()));
+//        hfs.add(//Ainterceptor.createFactory(activity.getApplicationContext()));
+        hfs.add(HttpInjectInterceptor.createFactory(new TestHttpInject()));
         return hfs;
     }
 
