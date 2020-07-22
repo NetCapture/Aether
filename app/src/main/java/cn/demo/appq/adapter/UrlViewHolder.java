@@ -1,5 +1,6 @@
 package cn.demo.appq.adapter;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -34,8 +35,8 @@ public class UrlViewHolder extends RecyclerView.ViewHolder {
             return;
         }
         iv_icon.setImageDrawable(AppUtils.getAppIcon(data.getAppPackage()));
-        tv_status.setText("Status:" + data.getRespCode() +
-                " Size:" + data.getLength() +
+        tv_status.setText(data.getMethod() + " Status:" + data.getRespCode() +
+                " Size:" + String.format("%.2f", (data.getLength() / 1024f)) + "KB" +
                 " Time:" + TimeUtils.date2String(new Date(data.getTime()), "yyyy-MM-dd HH:mm:ss"));
         tv_url.setText(data.getUrl());
 
@@ -47,5 +48,14 @@ public class UrlViewHolder extends RecyclerView.ViewHolder {
                 ActivityUtils.startActivity(options, DescriptionActivity.class);
             }
         });
+        if(data.getRespCode()!=null){
+            if (data.getRespCode() == 200){
+                itemView.setBackgroundColor(Color.parseColor("#99FF99"));
+            }else{
+                itemView.setBackgroundColor(Color.parseColor("#FF9999"));
+            }
+        }else{
+            itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        }
     }
 }
