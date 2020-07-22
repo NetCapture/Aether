@@ -24,7 +24,7 @@ import cn.demo.appq.R;
 import cn.demo.appq.entity.ReqEntity;
 import cn.demo.appq.utils.DBManager;
 
-public class DescriptionActivity extends AppCompatActivity implements MenuItem.OnMenuItemClickListener {
+public class DescriptionActivity extends AppCompatActivity implements MenuItem.OnMenuItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
 
     private Handler mHandler;
@@ -54,6 +54,8 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
         //设置返回键可用
         getSupportActionBar().setHomeButtonEnabled(true);
         newIntent(getIntent());
+
+        swRfl.setOnRefreshListener(this);
     }
 
     private void findview() {
@@ -80,6 +82,9 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
     }
 
     private void newIntent(Intent intent) {
+        if (intent == null || intent.getExtras() == null) {
+            return;
+        }
         long id = intent.getExtras().getLong("id");
         ReqEntity entity = DBManager.getInstance().getReqEntityDao().loadByRowId(id);
 
@@ -157,5 +162,11 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
             default:
         }
         return true;
+    }
+
+    @Override
+    public void onRefresh() {
+        newIntent(getIntent());
+        swRfl.setRefreshing(false);
     }
 }
