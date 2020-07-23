@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_fanghzou"
+        android:id="@+id/action_customize"
         android:orderInCategory="100"
-        android:title="方舟解码"
+        android:title="自定义解码器"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_qianfan"
+        android:id="@+id/action_base64"
         android:orderInCategory="101"
-        android:title="千帆解码"
+        android:title="Base64解码"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_nil"

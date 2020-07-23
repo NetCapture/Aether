@@ -22,7 +22,10 @@ import java.util.Objects;
 
 import cn.demo.appq.R;
 import cn.demo.appq.entity.ReqEntity;
+import cn.demo.appq.utils.Base64Decoder;
+import cn.demo.appq.utils.CustomizeDecoder;
 import cn.demo.appq.utils.DBManager;
+import cn.demo.appq.utils.DecoderHandler;
 
 public class DescriptionActivity extends AppCompatActivity implements MenuItem.OnMenuItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -109,6 +112,7 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
     }
 
     private void update(ReqEntity entity) {
+        entity = DecoderHandler.getDecoder().decode(entity);
         String reqContent = entity.getReqContent();
         if (reqContent != null) {
             tvReqContentValue.setText(reqContent);
@@ -135,8 +139,8 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.desc_activity_menu, menu);
-        menu.findItem(R.id.action_fanghzou).setOnMenuItemClickListener(this);
-        menu.findItem(R.id.action_qianfan).setOnMenuItemClickListener(this);
+        menu.findItem(R.id.action_base64).setOnMenuItemClickListener(this);
+        menu.findItem(R.id.action_customize).setOnMenuItemClickListener(this);
         menu.findItem(R.id.action_nil).setOnMenuItemClickListener(this);
         return true;
     }
@@ -153,14 +157,18 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_fanghzou:
+            case R.id.action_base64:
+                DecoderHandler.focusDecoder(new Base64Decoder());
                 break;
-            case R.id.action_qianfan:
+            case R.id.action_customize:
+                DecoderHandler.focusDecoder(new CustomizeDecoder());
                 break;
             case R.id.action_nil:
+                DecoderHandler.focusDecoder(DecoderHandler.DEFAULT);
                 break;
             default:
         }
+        newIntent(getIntent());
         return true;
     }
 
