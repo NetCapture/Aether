@@ -45,16 +45,17 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         public final static Property Length = new Property(18, Integer.class, "length", false, "LENGTH");
         public final static Property StreamId = new Property(19, Integer.class, "streamId", false, "STREAM_ID");
         public final static Property RequestHeaders = new Property(20, String.class, "requestHeaders", false, "REQUEST_HEADERS");
-        public final static Property ClientHttp2Settings = new Property(21, String.class, "clientHttp2Settings", false, "CLIENT_HTTP2_SETTINGS");
-        public final static Property PeerHttp2Settings = new Property(22, String.class, "peerHttp2Settings", false, "PEER_HTTP2_SETTINGS");
-        public final static Property ReqContent = new Property(23, String.class, "reqContent", false, "REQ_CONTENT");
-        public final static Property RespContent = new Property(24, String.class, "respContent", false, "RESP_CONTENT");
-        public final static Property RespMessage = new Property(25, String.class, "respMessage", false, "RESP_MESSAGE");
-        public final static Property RespCode = new Property(26, Integer.class, "respCode", false, "RESP_CODE");
-        public final static Property IsWebSocket = new Property(27, Boolean.class, "isWebSocket", false, "IS_WEB_SOCKET");
-        public final static Property NetType = new Property(28, String.class, "netType", false, "NET_TYPE");
-        public final static Property RequestBodyOffset = new Property(29, int.class, "requestBodyOffset", false, "REQUEST_BODY_OFFSET");
-        public final static Property ResponseBodyOffset = new Property(30, int.class, "responseBodyOffset", false, "RESPONSE_BODY_OFFSET");
+        public final static Property ResponseHeaders = new Property(21, String.class, "responseHeaders", false, "RESPONSE_HEADERS");
+        public final static Property ClientHttp2Settings = new Property(22, String.class, "clientHttp2Settings", false, "CLIENT_HTTP2_SETTINGS");
+        public final static Property PeerHttp2Settings = new Property(23, String.class, "peerHttp2Settings", false, "PEER_HTTP2_SETTINGS");
+        public final static Property ReqContent = new Property(24, String.class, "reqContent", false, "REQ_CONTENT");
+        public final static Property RespContent = new Property(25, String.class, "respContent", false, "RESP_CONTENT");
+        public final static Property RespMessage = new Property(26, String.class, "respMessage", false, "RESP_MESSAGE");
+        public final static Property RespCode = new Property(27, Integer.class, "respCode", false, "RESP_CODE");
+        public final static Property IsWebSocket = new Property(28, Boolean.class, "isWebSocket", false, "IS_WEB_SOCKET");
+        public final static Property NetType = new Property(29, String.class, "netType", false, "NET_TYPE");
+        public final static Property RequestBodyOffset = new Property(30, int.class, "requestBodyOffset", false, "REQUEST_BODY_OFFSET");
+        public final static Property ResponseBodyOffset = new Property(31, int.class, "responseBodyOffset", false, "RESPONSE_BODY_OFFSET");
     }
 
 
@@ -91,16 +92,17 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
                 "\"LENGTH\" INTEGER," + // 18: length
                 "\"STREAM_ID\" INTEGER," + // 19: streamId
                 "\"REQUEST_HEADERS\" TEXT," + // 20: requestHeaders
-                "\"CLIENT_HTTP2_SETTINGS\" TEXT," + // 21: clientHttp2Settings
-                "\"PEER_HTTP2_SETTINGS\" TEXT," + // 22: peerHttp2Settings
-                "\"REQ_CONTENT\" TEXT," + // 23: reqContent
-                "\"RESP_CONTENT\" TEXT," + // 24: respContent
-                "\"RESP_MESSAGE\" TEXT," + // 25: respMessage
-                "\"RESP_CODE\" INTEGER," + // 26: respCode
-                "\"IS_WEB_SOCKET\" INTEGER," + // 27: isWebSocket
-                "\"NET_TYPE\" TEXT," + // 28: netType
-                "\"REQUEST_BODY_OFFSET\" INTEGER NOT NULL ," + // 29: requestBodyOffset
-                "\"RESPONSE_BODY_OFFSET\" INTEGER NOT NULL );"); // 30: responseBodyOffset
+                "\"RESPONSE_HEADERS\" TEXT," + // 21: responseHeaders
+                "\"CLIENT_HTTP2_SETTINGS\" TEXT," + // 22: clientHttp2Settings
+                "\"PEER_HTTP2_SETTINGS\" TEXT," + // 23: peerHttp2Settings
+                "\"REQ_CONTENT\" TEXT," + // 24: reqContent
+                "\"RESP_CONTENT\" TEXT," + // 25: respContent
+                "\"RESP_MESSAGE\" TEXT," + // 26: respMessage
+                "\"RESP_CODE\" INTEGER," + // 27: respCode
+                "\"IS_WEB_SOCKET\" INTEGER," + // 28: isWebSocket
+                "\"NET_TYPE\" TEXT," + // 29: netType
+                "\"REQUEST_BODY_OFFSET\" INTEGER NOT NULL ," + // 30: requestBodyOffset
+                "\"RESPONSE_BODY_OFFSET\" INTEGER NOT NULL );"); // 31: responseBodyOffset
     }
 
     /** Drops the underlying database table. */
@@ -218,47 +220,52 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
             stmt.bindString(21, requestHeaders);
         }
  
+        String responseHeaders = entity.getResponseHeaders();
+        if (responseHeaders != null) {
+            stmt.bindString(22, responseHeaders);
+        }
+ 
         String clientHttp2Settings = entity.getClientHttp2Settings();
         if (clientHttp2Settings != null) {
-            stmt.bindString(22, clientHttp2Settings);
+            stmt.bindString(23, clientHttp2Settings);
         }
  
         String peerHttp2Settings = entity.getPeerHttp2Settings();
         if (peerHttp2Settings != null) {
-            stmt.bindString(23, peerHttp2Settings);
+            stmt.bindString(24, peerHttp2Settings);
         }
  
         String reqContent = entity.getReqContent();
         if (reqContent != null) {
-            stmt.bindString(24, reqContent);
+            stmt.bindString(25, reqContent);
         }
  
         String respContent = entity.getRespContent();
         if (respContent != null) {
-            stmt.bindString(25, respContent);
+            stmt.bindString(26, respContent);
         }
  
         String respMessage = entity.getRespMessage();
         if (respMessage != null) {
-            stmt.bindString(26, respMessage);
+            stmt.bindString(27, respMessage);
         }
  
         Integer respCode = entity.getRespCode();
         if (respCode != null) {
-            stmt.bindLong(27, respCode);
+            stmt.bindLong(28, respCode);
         }
  
         Boolean isWebSocket = entity.getIsWebSocket();
         if (isWebSocket != null) {
-            stmt.bindLong(28, isWebSocket ? 1L: 0L);
+            stmt.bindLong(29, isWebSocket ? 1L: 0L);
         }
  
         String netType = entity.getNetType();
         if (netType != null) {
-            stmt.bindString(29, netType);
+            stmt.bindString(30, netType);
         }
-        stmt.bindLong(30, entity.getRequestBodyOffset());
-        stmt.bindLong(31, entity.getResponseBodyOffset());
+        stmt.bindLong(31, entity.getRequestBodyOffset());
+        stmt.bindLong(32, entity.getResponseBodyOffset());
     }
 
     @Override
@@ -370,47 +377,52 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
             stmt.bindString(21, requestHeaders);
         }
  
+        String responseHeaders = entity.getResponseHeaders();
+        if (responseHeaders != null) {
+            stmt.bindString(22, responseHeaders);
+        }
+ 
         String clientHttp2Settings = entity.getClientHttp2Settings();
         if (clientHttp2Settings != null) {
-            stmt.bindString(22, clientHttp2Settings);
+            stmt.bindString(23, clientHttp2Settings);
         }
  
         String peerHttp2Settings = entity.getPeerHttp2Settings();
         if (peerHttp2Settings != null) {
-            stmt.bindString(23, peerHttp2Settings);
+            stmt.bindString(24, peerHttp2Settings);
         }
  
         String reqContent = entity.getReqContent();
         if (reqContent != null) {
-            stmt.bindString(24, reqContent);
+            stmt.bindString(25, reqContent);
         }
  
         String respContent = entity.getRespContent();
         if (respContent != null) {
-            stmt.bindString(25, respContent);
+            stmt.bindString(26, respContent);
         }
  
         String respMessage = entity.getRespMessage();
         if (respMessage != null) {
-            stmt.bindString(26, respMessage);
+            stmt.bindString(27, respMessage);
         }
  
         Integer respCode = entity.getRespCode();
         if (respCode != null) {
-            stmt.bindLong(27, respCode);
+            stmt.bindLong(28, respCode);
         }
  
         Boolean isWebSocket = entity.getIsWebSocket();
         if (isWebSocket != null) {
-            stmt.bindLong(28, isWebSocket ? 1L: 0L);
+            stmt.bindLong(29, isWebSocket ? 1L: 0L);
         }
  
         String netType = entity.getNetType();
         if (netType != null) {
-            stmt.bindString(29, netType);
+            stmt.bindString(30, netType);
         }
-        stmt.bindLong(30, entity.getRequestBodyOffset());
-        stmt.bindLong(31, entity.getResponseBodyOffset());
+        stmt.bindLong(31, entity.getRequestBodyOffset());
+        stmt.bindLong(32, entity.getResponseBodyOffset());
     }
 
     @Override
@@ -442,16 +454,17 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
             cursor.isNull(offset + 18) ? null : cursor.getInt(offset + 18), // length
             cursor.isNull(offset + 19) ? null : cursor.getInt(offset + 19), // streamId
             cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20), // requestHeaders
-            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // clientHttp2Settings
-            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // peerHttp2Settings
-            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // reqContent
-            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // respContent
-            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // respMessage
-            cursor.isNull(offset + 26) ? null : cursor.getInt(offset + 26), // respCode
-            cursor.isNull(offset + 27) ? null : cursor.getShort(offset + 27) != 0, // isWebSocket
-            cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28), // netType
-            cursor.getInt(offset + 29), // requestBodyOffset
-            cursor.getInt(offset + 30) // responseBodyOffset
+            cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21), // responseHeaders
+            cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22), // clientHttp2Settings
+            cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23), // peerHttp2Settings
+            cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24), // reqContent
+            cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25), // respContent
+            cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26), // respMessage
+            cursor.isNull(offset + 27) ? null : cursor.getInt(offset + 27), // respCode
+            cursor.isNull(offset + 28) ? null : cursor.getShort(offset + 28) != 0, // isWebSocket
+            cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29), // netType
+            cursor.getInt(offset + 30), // requestBodyOffset
+            cursor.getInt(offset + 31) // responseBodyOffset
         );
         return entity;
     }
@@ -479,16 +492,17 @@ public class ReqEntityDao extends AbstractDao<ReqEntity, Long> {
         entity.setLength(cursor.isNull(offset + 18) ? null : cursor.getInt(offset + 18));
         entity.setStreamId(cursor.isNull(offset + 19) ? null : cursor.getInt(offset + 19));
         entity.setRequestHeaders(cursor.isNull(offset + 20) ? null : cursor.getString(offset + 20));
-        entity.setClientHttp2Settings(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
-        entity.setPeerHttp2Settings(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
-        entity.setReqContent(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
-        entity.setRespContent(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
-        entity.setRespMessage(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
-        entity.setRespCode(cursor.isNull(offset + 26) ? null : cursor.getInt(offset + 26));
-        entity.setIsWebSocket(cursor.isNull(offset + 27) ? null : cursor.getShort(offset + 27) != 0);
-        entity.setNetType(cursor.isNull(offset + 28) ? null : cursor.getString(offset + 28));
-        entity.setRequestBodyOffset(cursor.getInt(offset + 29));
-        entity.setResponseBodyOffset(cursor.getInt(offset + 30));
+        entity.setResponseHeaders(cursor.isNull(offset + 21) ? null : cursor.getString(offset + 21));
+        entity.setClientHttp2Settings(cursor.isNull(offset + 22) ? null : cursor.getString(offset + 22));
+        entity.setPeerHttp2Settings(cursor.isNull(offset + 23) ? null : cursor.getString(offset + 23));
+        entity.setReqContent(cursor.isNull(offset + 24) ? null : cursor.getString(offset + 24));
+        entity.setRespContent(cursor.isNull(offset + 25) ? null : cursor.getString(offset + 25));
+        entity.setRespMessage(cursor.isNull(offset + 26) ? null : cursor.getString(offset + 26));
+        entity.setRespCode(cursor.isNull(offset + 27) ? null : cursor.getInt(offset + 27));
+        entity.setIsWebSocket(cursor.isNull(offset + 28) ? null : cursor.getShort(offset + 28) != 0);
+        entity.setNetType(cursor.isNull(offset + 29) ? null : cursor.getString(offset + 29));
+        entity.setRequestBodyOffset(cursor.getInt(offset + 30));
+        entity.setResponseBodyOffset(cursor.getInt(offset + 31));
      }
     
     @Override

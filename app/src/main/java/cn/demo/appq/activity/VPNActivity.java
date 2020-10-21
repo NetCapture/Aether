@@ -12,13 +12,13 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.NetworkUtils;
-import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.megatronking.netbare.NetBareListener;
 
@@ -41,6 +41,12 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
     private TextView tv_notice;
     private MenuItem update;
     private SwipeRefreshLayout srl_ref;
+    private View menu_setting;
+    private View menu_delete;
+    private View menu_stop;
+    private View menu_start;
+    private View menu_info;
+    private View menu_setting_vpn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +92,35 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-        if(netBarePresenter.isActive()){
+        netBarePresenter.prepareJks();
+        netBarePresenter.prepareVpn();
+        updateUIByVpnActive();
+    }
+
+    private void updateUIByVpnActive() {
+        if (netBarePresenter.isActive()) {
             tv_notice.setVisibility(View.GONE);
             srl_ref.setVisibility(View.VISIBLE);
+            menu_start.setVisibility(View.GONE);
+            if(fab.isOpened()){
+                menu_stop.setVisibility(View.VISIBLE);
+            }
+        } else {
+            tv_notice.setVisibility(View.VISIBLE);
+            srl_ref.setVisibility(View.GONE);
+          if(fab.isOpened()){
+              menu_start.setVisibility(View.VISIBLE);
+          }
+            menu_stop.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (fab.isOpened()) {
+            fab.close(true);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     private void findView() {
@@ -106,12 +137,26 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
         adapter = new UrlAdapter();
         rv_logs.setAdapter(adapter);
         fab = findViewById(R.id.fab);
-        FloatingActionButton menu_delete = findViewById(R.id.menu_delete);
-        FloatingActionButton menu_stop = findViewById(R.id.menu_stop);
-        FloatingActionButton menu_start = findViewById(R.id.menu_start);
-        FloatingActionButton menu_setting = findViewById(R.id.menu_setting);
-        FloatingActionButton menu_info = findViewById(R.id.menu_info);
-        FloatingActionButton menu_setting_vpn = findViewById(R.id.menu_setting_vpn);
+        fab.setClosedOnTouchOutside(true);
+        fab.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
+            @Override
+            public void onMenuToggle(boolean opened) {
+                if (netBarePresenter.isPrepareJks()) {
+                    menu_setting.setVisibility(View.GONE);
+                } else {
+                    menu_setting.setVisibility(View.VISIBLE);
+                }
+                if (opened) {
+                    updateUIByVpnActive();
+                }
+            }
+        });
+        menu_delete = findViewById(R.id.menu_delete);
+        menu_stop = findViewById(R.id.menu_stop);
+        menu_start = findViewById(R.id.menu_start);
+        menu_setting = findViewById(R.id.menu_setting);
+        menu_info = findViewById(R.id.menu_info);
+        menu_setting_vpn = findViewById(R.id.menu_setting_vpn);
         menu_setting_vpn.setOnClickListener(this);
         menu_delete.setOnClickListener(this);
         menu_stop.setOnClickListener(this);
@@ -132,6 +177,8 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
                 netBarePresenter.stopVpn();
                 break;
             case R.id.menu_start:
+                netBarePresenter.prepareJks();
+                netBarePresenter.prepareVpn();
                 netBarePresenter.startVpn();
                 netBarePresenter.queryByUrl(null);
                 break;
@@ -174,7 +221,14 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
         searchView.setIconifiedByDefault(true);
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setQueryHint("请输入URL关键字...");
-
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    netBarePresenter.resetCurrentQuery();
+                }
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

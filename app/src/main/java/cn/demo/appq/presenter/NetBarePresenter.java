@@ -16,11 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.demo.appq.App;
-import cn.demo.appq.Interceptor.Ainterceptor;
-import cn.demo.appq.Interceptor.TestHttpInject;
+import cn.demo.appq.Interceptor.NetHttpInject;
 import cn.demo.appq.entity.ReqEntity;
 import cn.demo.appq.greendao.ReqEntityDao;
-import cn.demo.appq.presenter.BasePresenter;
 import cn.demo.appq.utils.DBManager;
 import cn.demo.appq.view.NetBareView;
 
@@ -55,6 +53,11 @@ public class NetBarePresenter implements BasePresenter {
         }
     }
 
+    public boolean isPrepareJks() {
+        return JKS.isInstalled(activity.getApplicationContext(),
+                App.JSK_ALIAS);
+    }
+
     public void prepareVpn() {
         if (!mNetBare.isActive()) {
             // 配置VPN
@@ -75,9 +78,10 @@ public class NetBarePresenter implements BasePresenter {
 
     /**
      * 当前VPN是否已经开启
+     *
      * @return
      */
-    public boolean isActive(){
+    public boolean isActive() {
         return mNetBare.isActive();
     }
 
@@ -90,8 +94,8 @@ public class NetBarePresenter implements BasePresenter {
 
     private List<HttpInterceptorFactory> interceptorFactories() {
         List<HttpInterceptorFactory> hfs = new ArrayList<>();
-//        hfs.add(//Ainterceptor.createFactory(activity.getApplicationContext()));
-        hfs.add(HttpInjectInterceptor.createFactory(new TestHttpInject()));
+//        hfs.add(Ainterceptor.createFactory(activity.getApplicationContext()));
+        hfs.add(HttpInjectInterceptor.createFactory(new NetHttpInject()));
         return hfs;
     }
 
@@ -102,19 +106,48 @@ public class NetBarePresenter implements BasePresenter {
         mNetBare.registerNetBareListener(listener);
     }
 
-    public void queryByUrl(String query) {
-        List<ReqEntity> data;
+    String query;
+
+    public void resetCurrentQuery() {
+        query = null;
+    }
+
+    public void queryByUrl(String queryStr) {
+        if (!isActive()) {
+            return;
+        }
+        if (queryStr != null) {
+            this.query = queryStr;
+        }
+        List<ReqEntity> data = new ArrayList<>();
+        //略过缓存，保证取到的数据是最新的
+        DBManager.getInstance().getReqEntityDao().detachAll();
         if (TextUtils.isEmpty(query)) {
-            data = DBManager.getInstance()
+            data.addAll(DBManager.getInstance()
                     .getReqEntityDao()
-                    .queryBuilder().orderDesc(ReqEntityDao.Properties.Id).list();
+                    .queryBuilder().orderDesc(ReqEntityDao.Properties.Id).list());
         } else {
-            data = DBManager.getInstance()
+            //URL 匹配搜索
+            data.addAll(DBManager.getInstance()
                     .getReqEntityDao()
                     .queryBuilder()
                     .where(ReqEntityDao.Properties.Url.like("%" + query + "%"))
                     .orderDesc(ReqEntityDao.Properties.Id)
-                    .list();
+                    .list());
+            //应用名匹配搜索
+            data.addAll(DBManager.getInstance()
+                    .getReqEntityDao()
+                    .queryBuilder()
+                    .where(ReqEntityDao.Properties.AppName.like("%" + query + "%"))
+                    .orderDesc(ReqEntityDao.Properties.Id)
+                    .list());
+            //包名匹配搜索
+            data.addAll(DBManager.getInstance()
+                    .getReqEntityDao()
+                    .queryBuilder()
+                    .where(ReqEntityDao.Properties.AppPackage.like("%" + query + "%"))
+                    .orderDesc(ReqEntityDao.Properties.Id)
+                    .list());
         }
         view.onQueryReqlogResult(data);
     }

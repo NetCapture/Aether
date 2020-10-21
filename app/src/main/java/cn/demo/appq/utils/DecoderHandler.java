@@ -3,12 +3,7 @@ package cn.demo.appq.utils;
 import cn.demo.appq.entity.ReqEntity;
 
 public class DecoderHandler {
-    public static final IDecoder DEFAULT = new IDecoder() {
-        @Override
-        public ReqEntity decode(ReqEntity entity) {
-            return entity;
-        }
-    };
+    public static final IDecoder DEFAULT =new CustomizeDecoder();
     private static volatile IDecoder instance = null;
 
     private DecoderHandler() {

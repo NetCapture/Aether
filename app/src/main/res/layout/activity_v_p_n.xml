@@ -31,15 +31,15 @@
         <TextView
             android:id="@+id/tv_notice"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="300dp"
             android:layout_margin="40dp"
             android:gravity="center_vertical"
-            android:text="使用步骤：\n\n
-1. 先点击配置证书（首次安装初次使用）\n
-2. 点击配置VPN（首次安装初次使用）\n
-3. 启动\n
-4. 点击info，电脑打开提示链接\n
-5. 需注意手机与电脑请保持在同一局域网内
+            android:text="欢迎使用：\n\n
+1. 首次安装使用需配置证书。\n
+2. 点击右下方按钮，启动抓包。\n
+3. 点击单个链接可查看详细报文。\n
+4. 点击流量使用排行，电脑打开提示链接。\n
+5. 需注意手机与电脑请保持在同一局域网内。
 "
             android:textColor="#000000"
             android:textSize="16sp"
@@ -133,12 +133,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_setting_name"
+            android:visibility="gone"
             app:fab_label="配置证书(首次安装1)"
             app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/menu_setting_vpn"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_setting_name"
             app:fab_label="配置VPN(首次安装2)"
@@ -157,7 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_info_name"
-            app:fab_label="info"
+            app:fab_label="流量统计排行"
             app:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>

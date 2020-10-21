@@ -3,7 +3,6 @@ package cn.demo.appq.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.constraint.Group;
 import android.support.design.widget.AppBarLayout;
@@ -17,15 +16,16 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.GsonUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 import java.util.Objects;
 
 import cn.demo.appq.R;
 import cn.demo.appq.entity.ReqEntity;
-import cn.demo.appq.utils.Base64Decoder;
-import cn.demo.appq.utils.CustomizeDecoder;
 import cn.demo.appq.utils.DBManager;
 import cn.demo.appq.utils.DecoderHandler;
+
 
 public class DescriptionActivity extends AppCompatActivity implements MenuItem.OnMenuItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -45,6 +45,8 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
     private TextView tvRespContent;
     private TextView tvRespContentValue;
     private Group groupResp;
+    private TextView tv_resp_message;
+    private TextView tv_resp_message_value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,8 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
         tvRespHeaderValue = (TextView) findViewById(R.id.tv_resp_header_value);
         tvRespContent = (TextView) findViewById(R.id.tv_resp_content);
         tvRespContentValue = (TextView) findViewById(R.id.tv_resp_content_value);
+        tv_resp_message = (TextView) findViewById(R.id.tv_resp_message);
+        tv_resp_message_value = (TextView) findViewById(R.id.tv_resp_message_value);
         groupResp = (Group) findViewById(R.id.group_resp);
     }
 
@@ -89,26 +93,38 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
             return;
         }
         long id = intent.getExtras().getLong("id");
+        DBManager.getInstance().getReqEntityDao().detachAll();
         ReqEntity entity = DBManager.getInstance().getReqEntityDao().loadByRowId(id);
-
-        if (entity.getRespCode() == null) {
-            if (mHandler == null) {
-                //没返回则开启刷新，定时刷新数据展示
-                mHandler = new Handler(Looper.getMainLooper());
-            }
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    newIntent(getIntent());
-                }
-            }, 500);
-        } else {
-            if (mHandler != null) {
-                mHandler.removeCallbacksAndMessages(null);
-                mHandler = null;
-            }
+        if (entity == null) {
+            return;
         }
+
+//        if (entity.getRespCode() == null) {
+//            if (mHandler == null) {
+//                //没返回则开启刷新，定时刷新数据展示
+//                mHandler = new Handler(Looper.getMainLooper());
+//            }
+//            mHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    newIntent(getIntent());
+//                }
+//            }, 500);
+//        } else {
+//            if (mHandler != null) {
+//                mHandler.removeCallbacksAndMessages(null);
+//                mHandler = null;
+//            }
+//        }
         update(entity);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
     }
 
     private void update(ReqEntity entity) {
@@ -117,8 +133,27 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
         if (reqContent != null) {
             tvReqContentValue.setText(reqContent);
         }
-        Map<Object, Object> map = GsonUtils.fromJson(entity.getRequestHeaders(), Map.class);
+        Map<Object, Object> map1 = GsonUtils.fromJson(entity.getRequestHeaders(), Map.class);
+        Map<Object, Object> map2 = GsonUtils.fromJson(entity.getResponseHeaders(), Map.class);
+        tvReqHeaderValue.setText(formatMap(map1));
+        tvRespHeaderValue.setText(formatMap(map2));
+        String respContent = entity.getRespContent();
+        if (respContent != null) {
+            tvRespContentValue.setText(respContent);
+        }
+        tvRespCode.setText("Resp Code:" + entity.getRespCode());
+        String respMessage = entity.getRespMessage();
+        if (respMessage != null) {
+            tv_resp_message_value.setText(respMessage);
+        }
+    }
+
+    @NotNull
+    private StringBuilder formatMap(Map<Object, Object> map) {
         StringBuilder stringBuilder = new StringBuilder();
+        if (map == null) {
+            return stringBuilder;
+        }
         for (Map.Entry<Object, Object> entry :
                 map.entrySet()) {
             stringBuilder
@@ -127,20 +162,12 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
                     .append(entry.getValue().toString())
                     .append("\n");
         }
-        tvReqHeaderValue.setText(stringBuilder.toString());
-        tvRespHeaderValue.setText(stringBuilder.toString());
-        String respContent = entity.getRespContent();
-        if (respContent != null) {
-            tvRespContentValue.setText(respContent);
-        }
-        tvRespCode.setText("Resp Code:" + entity.getRespCode());
+        return stringBuilder;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.desc_activity_menu, menu);
-        menu.findItem(R.id.action_base64).setOnMenuItemClickListener(this);
-        menu.findItem(R.id.action_customize).setOnMenuItemClickListener(this);
         menu.findItem(R.id.action_nil).setOnMenuItemClickListener(this);
         return true;
     }
@@ -157,12 +184,6 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_base64:
-                DecoderHandler.focusDecoder(new Base64Decoder());
-                break;
-            case R.id.action_customize:
-                DecoderHandler.focusDecoder(new CustomizeDecoder());
-                break;
             case R.id.action_nil:
                 DecoderHandler.focusDecoder(DecoderHandler.DEFAULT);
                 break;

@@ -32,6 +32,7 @@ public class ReqEntity {
     private Integer length;
     private Integer streamId;
     private String requestHeaders;
+    private String responseHeaders;
     private String clientHttp2Settings;
     private String peerHttp2Settings;
     private String reqContent;
@@ -43,15 +44,15 @@ public class ReqEntity {
     private int requestBodyOffset;
     private int responseBodyOffset;
 
-    @Generated(hash = 2027405108)
+    @Generated(hash = 16580686)
     public ReqEntity(Long id, String sessionId, String appName, String appPackage,
             String appVersion, String appVersionCode, String url, String host, Integer port,
             Integer index, String ip, String protocol, String httpProtocol, String method,
             String path, Boolean isHttps, Long time, Integer uid, Integer length,
-            Integer streamId, String requestHeaders, String clientHttp2Settings,
-            String peerHttp2Settings, String reqContent, String respContent,
-            String respMessage, Integer respCode, Boolean isWebSocket, String netType,
-            int requestBodyOffset, int responseBodyOffset) {
+            Integer streamId, String requestHeaders, String responseHeaders,
+            String clientHttp2Settings, String peerHttp2Settings, String reqContent,
+            String respContent, String respMessage, Integer respCode, Boolean isWebSocket,
+            String netType, int requestBodyOffset, int responseBodyOffset) {
         this.id = id;
         this.sessionId = sessionId;
         this.appName = appName;
@@ -73,6 +74,7 @@ public class ReqEntity {
         this.length = length;
         this.streamId = streamId;
         this.requestHeaders = requestHeaders;
+        this.responseHeaders = responseHeaders;
         this.clientHttp2Settings = clientHttp2Settings;
         this.peerHttp2Settings = peerHttp2Settings;
         this.reqContent = reqContent;
@@ -343,6 +345,14 @@ public class ReqEntity {
 
     public void setResponseBodyOffset(Integer responseBodyOffset) {
         this.responseBodyOffset = responseBodyOffset;
+    }
+
+    public String getResponseHeaders() {
+        return this.responseHeaders;
+    }
+
+    public void setResponseHeaders(String responseHeaders) {
+        this.responseHeaders = responseHeaders;
     }
 
 

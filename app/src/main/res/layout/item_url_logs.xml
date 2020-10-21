@@ -10,7 +10,7 @@
         android:layout_margin="5dp"
         android:layout_height="60dp"
         android:scaleType="fitCenter"
-        android:src="@mipmap/ic_launcher"
+        android:src="@mipmap/ic_launcher_unknow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -29,9 +29,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbar">
 
-        <ScrollView
+        <cn.demo.appq.view.FastScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
+            android:padding="10dp"
             android:layout_height="match_parent">
 
             <android.support.constraint.ConstraintLayout
@@ -48,10 +49,10 @@
 
                 <TextView
                     android:id="@+id/tv_req_header_value"
+                    style="@style/text_resp_value_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Req Content:"
-                    android:textIsSelectable="true"
                     app:layout_constraintTop_toBottomOf="@id/tv_req_header" />
 
                 <TextView
@@ -64,10 +65,10 @@
 
                 <TextView
                     android:id="@+id/tv_req_content_value"
+                    style="@style/text_resp_value_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Req Content:"
-                    android:textIsSelectable="true"
                     app:layout_constraintTop_toBottomOf="@id/tv_req_content" />
 
                 <!--responce-->
@@ -93,10 +94,10 @@
 
                 <TextView
                     android:id="@+id/tv_resp_header_value"
+                    style="@style/text_resp_value_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="resp Content:"
-                    android:textIsSelectable="true"
                     app:layout_constraintTop_toBottomOf="@id/tv_resp_header" />
 
                 <TextView
@@ -109,11 +110,26 @@
 
                 <TextView
                     android:id="@+id/tv_resp_content_value"
+                    style="@style/text_resp_value_style"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="resp Content:"
-                    android:textIsSelectable="true"
                     app:layout_constraintTop_toBottomOf="@id/tv_resp_content" />
+
+                <TextView
+                    android:id="@+id/tv_resp_message"
+                    style="@style/req_desc_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="resp Message:"
+                    app:layout_constraintTop_toBottomOf="@id/tv_resp_content_value" />
+
+                <TextView
+                    android:id="@+id/tv_resp_message_value"
+                    style="@style/text_resp_value_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tv_resp_message" />
 
 
                 <android.support.constraint.Group
@@ -122,7 +138,7 @@
                     android:layout_height="wrap_content"
                     app:constraint_referenced_ids="tv_resp_code,tv_resp_content,tv_resp_content_value,tv_resp_header,tv_resp_header_value" />
             </android.support.constraint.ConstraintLayout>
-        </ScrollView>
+        </cn.demo.appq.view.FastScrollView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
