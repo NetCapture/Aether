@@ -65,6 +65,10 @@ public class NetHttpInject implements HttpInjector {
                 ByteBuffer newBuffer = ByteBuffer.allocate(prebuffer.limit() + nextBuffer.limit());
                 newBuffer.put(prebuffer);
                 newBuffer.put(nextBuffer);
+                if(newBuffer.limit()>=2048*1024*3.0f/4){
+                    // SqlLite 单行最大容量是 2M
+                    return;
+                }
                 reqEntities.get(0).setReqContent(IOUtils.byteBuffer2String(newBuffer));
                 DBManager.getInstance().getReqEntityDao().update(reqEntities.get(0));
             }
@@ -131,6 +135,10 @@ public class NetHttpInject implements HttpInjector {
                 ByteBuffer newBuffer = ByteBuffer.allocate(prebuffer.limit() + nextBuffer.limit());
                 newBuffer.put(prebuffer);
                 newBuffer.put(nextBuffer);
+                if(newBuffer.limit()>=2048*1024*3.0f/4){
+                    // SqlLite 单行最大容量是 2M
+                    return;
+                }
                 entity.setRespContent(IOUtils.byteBuffer2String(newBuffer));
             }
             entity.setRespMessage(response.message());
