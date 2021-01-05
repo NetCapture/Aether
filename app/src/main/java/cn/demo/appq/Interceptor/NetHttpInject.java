@@ -56,11 +56,12 @@ public class NetHttpInject implements HttpInjector {
                 .where(ReqEntityDao.Properties.SessionId.eq(request.id()))
                 .list();
         if (reqEntities != null && reqEntities.size() > 0) {
+            ReqEntity entity = reqEntities.get(0);
             if (RECORD_REQUEST_BODY){
-                if (reqEntities.get(0).getReqContent() == null) {
-                    reqEntities.get(0).setReqContent("");
+                if (entity.getReqContent() == null) {
+                    entity.setReqContent("");
                 }
-                ByteBuffer prebuffer = IOUtils.string2ByteBuffer(reqEntities.get(0).getReqContent());
+                ByteBuffer prebuffer = IOUtils.string2ByteBuffer(entity.getReqContent());
                 ByteBuffer nextBuffer = body.toBuffer().asReadOnlyBuffer();
                 ByteBuffer newBuffer = ByteBuffer.allocate(prebuffer.limit() + nextBuffer.limit());
                 newBuffer.put(prebuffer);
@@ -69,8 +70,10 @@ public class NetHttpInject implements HttpInjector {
                     // SqlLite 单行最大容量是 2M
                     return;
                 }
-                reqEntities.get(0).setReqContent(IOUtils.byteBuffer2String(newBuffer));
-                DBManager.getInstance().getReqEntityDao().update(reqEntities.get(0));
+                //更新流量消耗大小
+                entity.setLength(entity.getLength()+nextBuffer.limit());
+                entity.setReqContent(IOUtils.byteBuffer2String(newBuffer));
+                DBManager.getInstance().getReqEntityDao().update(entity);
             }
         } else {
             String packagename = App.getProcessNameByUid(request.uid());
