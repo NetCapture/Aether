@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'org.greenrobot.greendao' // 应用插件
+apply plugin: 'org.greenrobot.greendao' // apply plugin
 greendao {
     // 指定数据库schema版本号，迁移等操作会用到
     schemaVersion 2
@@ -59,7 +59,7 @@ dependencies {
     implementation project(':netbare-core')
     implementation project(':netbare-injector')
     implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'org.greenrobot:greendao:3.2.2'
+    implementation 'org.greenrobot:greendao:3.3.0' // add library
     implementation 'com.blankj:utilcode:1.29.0'
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
