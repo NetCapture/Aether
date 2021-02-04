@@ -118,9 +118,9 @@ public class CaseInsensitiveLinkedMap<V> extends AbstractMap<String, V> {
 
         private static final class MapEntry<V> implements Entry<String, V> {
 
-            private final Entry<CaseInsensitiveLinkedMap.CaseInsensitiveKey, V> entry;
+            private final Entry<CaseInsensitiveKey, V> entry;
 
-            private MapEntry(Entry<CaseInsensitiveLinkedMap.CaseInsensitiveKey, V> entry) {
+            private MapEntry(Entry<CaseInsensitiveKey, V> entry) {
                 this.entry = entry;
             }
 
@@ -139,7 +139,7 @@ public class CaseInsensitiveLinkedMap<V> extends AbstractMap<String, V> {
                 return this.entry.setValue(value);
             }
 
-            private Entry<CaseInsensitiveLinkedMap.CaseInsensitiveKey, V> getEntry() {
+            private Entry<CaseInsensitiveKey, V> getEntry() {
                 return this.entry;
             }
         }

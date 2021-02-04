@@ -1,1 +1,1 @@
-include ':netbare-core', ':netbare-injector', ':app'
+include ':netbare', ':app'

@@ -15,8 +15,8 @@
  */
 package com.github.megatronking.netbare.http;
 
-import com.github.megatronking.netbare.stream.Stream;
 import com.github.megatronking.netbare.injector.InjectorCallback;
+import com.github.megatronking.netbare.stream.Stream;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

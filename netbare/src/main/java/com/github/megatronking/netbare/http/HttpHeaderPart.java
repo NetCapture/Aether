@@ -19,8 +19,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.github.megatronking.netbare.utils.CaseInsensitiveLinkedMap;
 import com.github.megatronking.netbare.stream.Stream;
+import com.github.megatronking.netbare.utils.CaseInsensitiveLinkedMap;
 
 import java.util.ArrayList;
 import java.util.List;
