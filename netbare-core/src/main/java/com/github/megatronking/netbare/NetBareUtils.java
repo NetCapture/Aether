@@ -151,13 +151,5 @@ public final class NetBareUtils {
         return result;
     }
 
-    /**
-     * Whether the OS build version is Android Q.
-     *
-     * @return True means the build android Q.
-     */
-    public static boolean isAndroidQ() {
-        return "Q".equals(Build.VERSION.RELEASE);
-    }
 
 }

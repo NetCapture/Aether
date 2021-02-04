@@ -90,10 +90,6 @@ public final class UidDumper {
                 return;
             }
         }
-        // Android Q abandons the access permission.
-        if (NetBareUtils.isAndroidQ()) {
-            return;
-        }
         final int port = NetBareUtils.convertPort(session.localPort);
         try {
             Net net = mNetCaches.get(session.remoteIp, new Callable<Net>() {

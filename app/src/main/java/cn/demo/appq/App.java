@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 
 import com.github.megatronking.netbare.NetBare;
-import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.ssl.JKS;
 
 import me.weishu.reflection.Reflection;
@@ -37,10 +36,7 @@ public class App extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        // On android Q, we can't access Java8EngineWrapper with reflect.
-        if (NetBareUtils.isAndroidQ()) {
-            Reflection.unseal(base);
-        }
+        Reflection.unseal(base);
     }
 
     public static String getProcessNameByUid(int uid) {

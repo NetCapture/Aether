@@ -53,7 +53,7 @@ tasks.withType(Javadoc) {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'me.weishu:free_reflection:1.2.0'
+    implementation 'me.weishu:free_reflection:3.0.1'
     implementation 'com.amitshekhar.android:debug-db:1.0.6'
     // NetBare libraries
     implementation project(':netbare-core')
