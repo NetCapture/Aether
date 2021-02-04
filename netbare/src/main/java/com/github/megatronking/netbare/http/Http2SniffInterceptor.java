@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.http;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.http2.Http2;
 import com.github.megatronking.netbare.ssl.SSLRefluxCallback;
 import com.google.common.primitives.Bytes;
@@ -34,7 +34,7 @@ import java.nio.ByteBuffer;
 /* package */ class Http2SniffInterceptor extends HttpIndexedInterceptor {
 
     private SSLRefluxCallback<HttpRequest, HttpResponse> mCallback;
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     /* package */ Http2SniffInterceptor(SSLRefluxCallback<HttpRequest, HttpResponse> callback) {
         this.mCallback = callback;
@@ -46,7 +46,7 @@ import java.nio.ByteBuffer;
         if (index == 0) {
             HttpRequest request = chain.request();
             if (mLog == null) {
-                mLog = new NetBareXLog(request.protocol(), request.ip(), request.port());
+                mLog = new XLog(request.protocol(), request.ip(), request.port());
             }
             // HTTP2 is forces to use SSL connection.
             if (request.isHttps()) {
@@ -80,7 +80,7 @@ import java.nio.ByteBuffer;
         if (index == 0) {
             HttpResponse response = chain.response();
             if (mLog == null) {
-                mLog = new NetBareXLog(response.protocol(), response.ip(), response.port());
+                mLog = new XLog(response.protocol(), response.ip(), response.port());
             }
             // HTTP2 is forces to use SSL connection.
             if (response.isHttps()) {

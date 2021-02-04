@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.ssl;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.gateway.Request;
 
 import java.io.IOException;
@@ -67,7 +67,7 @@ public class SSLResponseCodec extends SSLCodec {
                 mEngine = factory.createClientEngine(host, mRequest.port());
                 mEngine.setUseClientMode(true);
             } catch (ExecutionException e) {
-                NetBareLog.e("Failed to create client SSLEngine: " + e.getMessage());
+                EL.e("Failed to create client SSLEngine: " + e.getMessage());
             }
         }
         return mEngine;

@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.proxy;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.ip.IcmpHeader;
 import com.github.megatronking.netbare.ip.IpHeader;
 
@@ -38,8 +38,8 @@ public final class IcmpProxyServerForwarder implements ProxyServerForwarder {
     public void forward(byte[] packet, int len, OutputStream output) {
         IpHeader ipHeader = new IpHeader(packet, 0);
         IcmpHeader icmpHeader = new IcmpHeader(ipHeader, packet, ipHeader.getHeaderLength());
-        NetBareLog.v("ICMP type: " + icmpHeader.getType());
-        NetBareLog.v("ICMP code: " + icmpHeader.getCode());
+        EL.v("ICMP type: " + icmpHeader.getType());
+        EL.v("ICMP code: " + icmpHeader.getCode());
         // TODO transfer to proxy server
     }
 

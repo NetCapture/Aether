@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.tunnel;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.ip.Protocol;
 
 import java.io.IOException;
@@ -33,12 +33,12 @@ import java.nio.channels.SocketChannel;
  */
 public class TcpProxyTunnel extends TcpTunnel {
 
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     public TcpProxyTunnel(SocketChannel socketChannel, Selector selector, int remotePort) {
         super(socketChannel, selector);
         Socket socket = socketChannel.socket();
-        this.mLog = new NetBareXLog(Protocol.TCP, socket.getInetAddress().getHostAddress(),
+        this.mLog = new XLog(Protocol.TCP, socket.getInetAddress().getHostAddress(),
                 remotePort);
     }
 

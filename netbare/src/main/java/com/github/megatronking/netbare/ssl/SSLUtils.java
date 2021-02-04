@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.ssl;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.http.HttpProtocol;
 
 import java.nio.ByteBuffer;
@@ -86,7 +86,7 @@ public final class SSLUtils {
         final int position = buffer.position();
         // Get the packet length and wait until we get a packets worth of data to unwrap.
         if (buffer.remaining() < SSL_RECORD_HEADER_LENGTH) {
-            NetBareLog.w("No enough ssl/tls packet length: " + buffer.remaining());
+            EL.w("No enough ssl/tls packet length: " + buffer.remaining());
             return PACKET_NOT_ENOUGH;
         }
         int packetLength = 0;
@@ -128,7 +128,7 @@ public final class SSLUtils {
                 packetLength = headerLength == 2 ?
                         (buffer.getShort(position) & 0x7FFF) + 2 : (buffer.getShort(position) & 0x3FFF) + 3;
                 if (packetLength <= headerLength) {
-                    NetBareLog.w("No enough ssl/tls packet length, packet: " + packetLength +
+                    EL.w("No enough ssl/tls packet length, packet: " + packetLength +
                             " header: " + headerLength);
                     // No enough data.
                     return PACKET_NOT_ENOUGH;
@@ -140,7 +140,7 @@ public final class SSLUtils {
         }
         // Decode SSL data.
         if (packetLength > buffer.remaining()) {
-            NetBareLog.w("No enough ssl/tls packet length, packet: " + packetLength +
+            EL.w("No enough ssl/tls packet length, packet: " + packetLength +
                     " actual: " + buffer.remaining());
             // Wait until the whole packet can be read.
             return PACKET_NOT_ENOUGH;

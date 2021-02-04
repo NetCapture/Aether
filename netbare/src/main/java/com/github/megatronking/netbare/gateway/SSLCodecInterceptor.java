@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.gateway;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.ssl.SSLCodec;
 import com.github.megatronking.netbare.ssl.SSLEngineFactory;
 import com.github.megatronking.netbare.ssl.SSLRefluxCallback;
@@ -45,7 +45,7 @@ public abstract class SSLCodecInterceptor<Req extends Request, ReqChain extends 
     private SSLRequestCodec mRequestCodec;
     private SSLResponseCodec mResponseCodec;
 
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     /**
      * Should decrypt the request buffer with SSL codec.
@@ -72,7 +72,7 @@ public abstract class SSLCodecInterceptor<Req extends Request, ReqChain extends 
         mResponseCodec = new SSLResponseCodec(engineFactory);
         mResponseCodec.setRequest(mRequest);
 
-        mLog = new NetBareXLog(request.protocol(), request.ip(), request.port());
+        mLog = new XLog(request.protocol(), request.ip(), request.port());
     }
 
     @Override

@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.http2;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.http.HttpId;
 import com.github.megatronking.netbare.http.HttpPendingIndexedInterceptor;
 import com.github.megatronking.netbare.http.HttpProtocol;
@@ -56,7 +56,7 @@ public final class Http2DecodeInterceptor extends HttpPendingIndexedInterceptor 
     private Hpack.Reader mHpackRequestReader;
     private Hpack.Reader mHpackResponseReader;
 
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     public Http2DecodeInterceptor(SSLRefluxCallback<HttpRequest, HttpResponse> refluxCallback,
                                   HttpZygoteRequest zygoteRequest,
@@ -81,7 +81,7 @@ public final class Http2DecodeInterceptor extends HttpPendingIndexedInterceptor 
             }
             if (mLog == null) {
                 HttpRequest request = chain.request();
-                mLog = new NetBareXLog(request.protocol(), request.ip(), request.port());
+                mLog = new XLog(request.protocol(), request.ip(), request.port());
             }
             if (mHpackRequestReader == null) {
                 mHpackRequestReader = new Hpack.Reader();
@@ -151,7 +151,7 @@ public final class Http2DecodeInterceptor extends HttpPendingIndexedInterceptor 
             }
             if (mLog == null) {
                 HttpResponse response = chain.response();
-                mLog = new NetBareXLog(response.protocol(), response.ip(), response.port());
+                mLog = new XLog(response.protocol(), response.ip(), response.port());
             }
             if (mHpackResponseReader == null) {
                 mHpackResponseReader = new Hpack.Reader();

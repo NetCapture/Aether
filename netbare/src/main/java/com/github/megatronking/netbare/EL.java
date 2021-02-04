@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,14 +56,27 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-/**
- * A static log util using in NetBare, and the tag is 'NetBare';
- *
- * @author Megatron King
- * @since 2018-10-08 23:12
- */
-public final class NetBareLog {
 
+/**
+ * @Copyright © 2015 Sanbo Inc. All rights reserved.
+ * @Description <pre>
+ * Log统一管理类,提供功能：
+ * 1.log工具类支持全部打印   「支持Log的所有功能.」
+ * 2.支持类似C的格式化输出或Java的String.format「%个数和参数个数需要一直才能格式化」
+ * 3.支持Java堆栈打印
+ * 4.支持键入和不键入TAG  「不键入tag,tag是sanbo，默认第一个参数String为tag」
+ * 5.支持shell控制log是否打印.
+ *          tag为sanbo的控制命令：setprop log.tag.sanbo log等级.
+ *          log等级：VERBOSE/DEBUG/INFO/WARN/ERROR/ASSERT
+ * 6.格式化输出.
+ * 7.支持XML/JSON/Map/Array等更多对象打印
+ * 8.支持打印跳过堆栈
+ *              </pre>
+ * @Version: 7.0
+ * @Create: 2019-04-30 11:28
+ * @Author: sanbo
+ */
+public final class EL {
 
     //是否使用
     private static final boolean INTERNAL_CONTROL_ENABLE = true;
@@ -129,8 +143,8 @@ public final class NetBareLog {
             isNeedCallstackInfo = false;
             // 是否按照条形框输出,有包裹域的输出
             isNeedWrapper = false;
-            // 是否格式化展示,主要针对JSON
-            isFormat = false;
+            // 是否格式化展示,主要针对JSON+简化堆栈
+            isFormat = true;
             mPattern = Pattern.compile("%", Pattern.CASE_INSENSITIVE);
             // 默认tag
             DEFAULT_TAG = "sanbo";
@@ -172,8 +186,6 @@ public final class NetBareLog {
         }
     }
 
-    private NetBareLog() {
-    }
 
     /**
      * 初始化接口
@@ -282,9 +294,9 @@ public final class NetBareLog {
 
         StringBuilder sb = new StringBuilder();
         // 开始
-        if (isFormat) {
-            sb.append(CONTENT_LOG_INFO).append("\n");
-        }
+//        if (isFormat) {
+//            sb.append(CONTENT_LOG_INFO).append("\n");
+//        }
         String stackinfo = getCallStaceInfo();
         if (!TextUtils.isEmpty(stackinfo)) {
             sb.append(stackinfo).append("\n");
@@ -464,7 +476,8 @@ public final class NetBareLog {
             if (currentFile && !isKeeping) {
                 break;
             }
-            if (ste.getClassName().equals(NetBareLog.class.getName())) {
+            // 跳过忽略的类
+            if (mIgnoreClasses.contains(ste.getClassName())) {
                 if (!currentFile) {
                     currentFile = true;
                 }
@@ -1439,7 +1452,7 @@ public final class NetBareLog {
      * @param isShowLog
      * @return
      */
-    public NetBareLog setDebug(boolean isShowLog) {
+    public EL setDebug(boolean isShowLog) {
         USER_DEBUG = isShowLog;
         return HLODER.INSTANCE;
     }
@@ -1450,7 +1463,7 @@ public final class NetBareLog {
      * @param defaultTag
      * @return
      */
-    public NetBareLog setTag(String defaultTag) {
+    public EL setTag(String defaultTag) {
         if (!TextUtils.isEmpty(defaultTag)) {
             DEFAULT_TAG = defaultTag;
         }
@@ -1458,12 +1471,26 @@ public final class NetBareLog {
     }
 
 
-    public static NetBareLog getInstance() {
-        return HLODER.INSTANCE;
-    }
+    private static CopyOnWriteArrayList<String> mIgnoreClasses = new CopyOnWriteArrayList<String>();
 
-    private static class HLODER {
-        private static final NetBareLog INSTANCE = new NetBareLog();
+    /**
+     * 设置堆栈的类名字
+     *
+     * @param clazzes
+     * @return
+     */
+    public EL setIgnoreClass(Class<?>... clazzes) {
+        try {
+            for (int i = 0; i < clazzes.length; i++) {
+                String name = clazzes[i].getName();
+                if (!mIgnoreClasses.contains(name)) {
+                    mIgnoreClasses.add(name);
+                }
+            }
+        } catch (Throwable e) {
+            Log.e(DEFAULT_TAG, Log.getStackTraceString(e));
+        }
+        return HLODER.INSTANCE;
     }
 
     public static final class MLEVEL {
@@ -1475,4 +1502,16 @@ public final class NetBareLog {
         public static final int WTF = 0x6;
     }
 
+    private EL() {
+        setIgnoreClass(this.getClass());
+        setIgnoreClass(XLog.class);
+    }
+
+    public static EL getInstance() {
+        return HLODER.INSTANCE;
+    }
+
+    private static class HLODER {
+        private static final EL INSTANCE = new EL();
+    }
 }

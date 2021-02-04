@@ -18,7 +18,7 @@ package com.github.megatronking.netbare.ssl;
 import android.os.Build;
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -285,7 +285,7 @@ public final class SSLEngineFactory {
             }
             return trustManagers;
         } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
-            NetBareLog.wtf(e);
+            EL.wtf(e);
         }
         return null;
     }

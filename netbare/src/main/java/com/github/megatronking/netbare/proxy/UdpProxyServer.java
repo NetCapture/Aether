@@ -18,7 +18,7 @@ package com.github.megatronking.netbare.proxy;
 import android.net.VpnService;
 import android.os.SystemClock;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.gateway.VirtualGateway;
 import com.github.megatronking.netbare.ip.IpHeader;
@@ -117,10 +117,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
     @Override
     public void run() {
-        NetBareLog.i("[UDP]Server starts running.");
+        EL.i("[UDP]Server starts running.");
         super.run();
         NetBareUtils.closeQuietly(mSelector);
-        NetBareLog.i("[UDP]Server stops running.");
+        EL.i("[UDP]Server stops running.");
     }
 
     @Override

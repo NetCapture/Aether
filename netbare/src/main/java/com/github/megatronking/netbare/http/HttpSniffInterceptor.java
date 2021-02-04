@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.http;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.ssl.SSLCodec;
 import com.github.megatronking.netbare.ssl.SSLWhiteList;
 
@@ -53,7 +53,7 @@ import java.nio.ByteBuffer;
         if (index == 0) {
             if (SSLWhiteList.contains(chain.request().ip())) {
                 mType = TYPE_WHITELIST;
-                NetBareLog.i("detect whitelist ip " + chain.request().ip());
+                EL.i("detect whitelist ip " + chain.request().ip());
             } else {
                 mType = chain.request().host() == null ? TYPE_INVALID : verifyHttpType(buffer);
             }
@@ -108,7 +108,7 @@ import java.nio.ByteBuffer;
                 return TYPE_HTTPS;
             default:
                 // Unknown first byte data.
-                NetBareLog.e("Unknown first request byte : " + first);
+                EL.e("Unknown first request byte : " + first);
                 break;
         }
         return TYPE_INVALID;

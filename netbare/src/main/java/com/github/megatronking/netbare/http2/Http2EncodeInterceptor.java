@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.http2;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.gateway.InterceptorChain;
 import com.github.megatronking.netbare.http.HttpInterceptor;
 import com.github.megatronking.netbare.http.HttpProtocol;
@@ -44,7 +44,7 @@ public final class Http2EncodeInterceptor implements HttpInterceptor {
     private final Map<Integer, Integer> mStreamRequestIndexes;
     private final Map<Integer, Integer> mStreamResponseIndexes;
 
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     private Hpack.Writer mHpackRequestWriter;
     private Hpack.Writer mHpackResponseWriter;
@@ -60,7 +60,7 @@ public final class Http2EncodeInterceptor implements HttpInterceptor {
         if (chain.request().httpProtocol() == HttpProtocol.HTTP_2) {
             if (mLog == null) {
                 HttpRequest request = chain.request();
-                mLog = new NetBareXLog(request.protocol(), request.ip(), request.port());
+                mLog = new XLog(request.protocol(), request.ip(), request.port());
             }
             if (mHpackRequestWriter == null) {
                 mHpackRequestWriter = new Hpack.Writer();
@@ -91,7 +91,7 @@ public final class Http2EncodeInterceptor implements HttpInterceptor {
         if (chain.response().httpProtocol() == HttpProtocol.HTTP_2) {
             if (mLog == null) {
                 HttpResponse response = chain.response();
-                mLog = new NetBareXLog(response.protocol(), response.ip(), response.port());
+                mLog = new XLog(response.protocol(), response.ip(), response.port());
             }
             if (mHpackResponseWriter == null) {
                 mHpackResponseWriter = new Hpack.Writer();

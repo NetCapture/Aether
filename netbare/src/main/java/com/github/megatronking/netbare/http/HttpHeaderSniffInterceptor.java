@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.http;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.ssl.SSLRefluxCallback;
 
 import java.io.IOException;
@@ -120,7 +120,7 @@ import java.nio.ByteBuffer;
                 return false;
             default:
                 // Unknown first byte data.
-                NetBareLog.w("Unknown first request header byte : " + first);
+                EL.w("Unknown first request header byte : " + first);
                 break;
         }
         return true;
@@ -137,7 +137,7 @@ import java.nio.ByteBuffer;
                 return false;
             }
         }
-        NetBareLog.w("Unknown request header method : " + headerMethod);
+        EL.w("Unknown request header method : " + headerMethod);
         return true;
     }
 
@@ -150,7 +150,7 @@ import java.nio.ByteBuffer;
                 return false;
             default:
                 // Unknown first byte data.
-                NetBareLog.w("Unknown first response header byte : " + first);
+                EL.w("Unknown first response header byte : " + first);
                 break;
         }
         return true;
@@ -168,7 +168,7 @@ import java.nio.ByteBuffer;
                 return false;
             }
         }
-        NetBareLog.w("Unknown response header protocol : " + headerProtocol);
+        EL.w("Unknown response header protocol : " + headerProtocol);
         return true;
     }
 

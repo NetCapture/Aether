@@ -18,7 +18,7 @@ package com.github.megatronking.netbare.ssl;
 import android.os.Build;
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -214,7 +214,7 @@ public abstract class SSLCodec {
                 throw new IOException("Handshake failed: Invalid handshake status: " + status);
             } else if (status == SSLEngineResult.HandshakeStatus.FINISHED) {
                 mHandshakeFinished = true;
-                NetBareLog.i("SSL handshake finished!");
+                EL.i("SSL handshake finished!");
                 if (input.hasRemaining()) {
                     decode(engine, input, callback);
                 }

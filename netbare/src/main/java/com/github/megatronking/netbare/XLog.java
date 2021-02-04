@@ -24,7 +24,7 @@ import com.github.megatronking.netbare.ip.Protocol;
  * @author Megatron King
  * @since 2018-10-14 10:25
  */
-public final class NetBareXLog {
+public final class XLog {
 
     private final String mPrefix;
 
@@ -35,7 +35,7 @@ public final class NetBareXLog {
      * @param ip The ip address, a string value.
      * @param port The port, a short value.
      */
-    public NetBareXLog(Protocol protocol, String ip, short port) {
+    public XLog(Protocol protocol, String ip, short port) {
         this(protocol, ip, NetBareUtils.convertPort(port));
     }
 
@@ -46,7 +46,7 @@ public final class NetBareXLog {
      * @param ip The ip address, a int value.
      * @param port The port, a short value.
      */
-    public NetBareXLog(Protocol protocol, int ip, short port) {
+    public XLog(Protocol protocol, int ip, short port) {
         this(protocol, NetBareUtils.convertIp(ip), port);
     }
 
@@ -57,7 +57,7 @@ public final class NetBareXLog {
      * @param ip The ip address, a int value.
      * @param port The port, a int value.
      */
-    public NetBareXLog(Protocol protocol, int ip, int port) {
+    public XLog(Protocol protocol, int ip, int port) {
         this(protocol, NetBareUtils.convertIp(ip), port);
     }
 
@@ -66,7 +66,7 @@ public final class NetBareXLog {
      *
      * @param session The session contains net information.
      */
-    public NetBareXLog(Session session) {
+    public XLog(Session session) {
         this(session.protocol, session.remoteIp, session.remotePort);
     }
 
@@ -77,7 +77,7 @@ public final class NetBareXLog {
      * @param ip The ip address, a string value.
      * @param port The port, a int value.
      */
-    public NetBareXLog(Protocol protocol, String ip, int port) {
+    public XLog(Protocol protocol, String ip, int port) {
         this.mPrefix = "[" + protocol.name() + "][" + ip + ":" + port + "]";
     }
 
@@ -87,12 +87,12 @@ public final class NetBareXLog {
      * @param msg The message you would like logged.
      */
     public void v(String msg) {
-        NetBareLog.v(mPrefix + msg);
+        EL.v(mPrefix + msg);
     }
 
 
     public void v(String msg, Object... args) {
-        NetBareLog.v(mPrefix + msg, args);
+        EL.v(mPrefix + msg, args);
     }
 
     /**
@@ -101,7 +101,7 @@ public final class NetBareXLog {
      * @param msg The message you would like logged.
      */
     public void d(String msg) {
-        NetBareLog.d(mPrefix + msg);
+        EL.d(mPrefix + msg);
     }
 
     /**
@@ -111,7 +111,7 @@ public final class NetBareXLog {
      * @param args Arguments referenced by the format specifiers in the format string.
      */
     public void d(String msg, Object... args) {
-        NetBareLog.d(mPrefix + msg, args);
+        EL.d(mPrefix + msg, args);
     }
 
     /**
@@ -120,7 +120,7 @@ public final class NetBareXLog {
      * @param msg The message you would like logged.
      */
     public void i(String msg) {
-        NetBareLog.i(mPrefix + msg);
+        EL.i(mPrefix + msg);
     }
 
     /**
@@ -130,7 +130,7 @@ public final class NetBareXLog {
      * @param args Arguments referenced by the format specifiers in the format string.
      */
     public void i(String msg, Object... args) {
-        NetBareLog.i(mPrefix + msg, args);
+        EL.i(mPrefix + msg, args);
     }
 
     /**
@@ -139,7 +139,7 @@ public final class NetBareXLog {
      * @param msg The message you would like logged.
      */
     public void e(String msg) {
-        NetBareLog.e(mPrefix + msg);
+        EL.e(mPrefix + msg);
     }
 
     /**
@@ -149,7 +149,7 @@ public final class NetBareXLog {
      * @param args Arguments referenced by the format specifiers in the format string.
      */
     public void e(String msg, Object... args) {
-        NetBareLog.e(mPrefix + msg, args);
+        EL.e(mPrefix + msg, args);
     }
 
     /**
@@ -158,7 +158,7 @@ public final class NetBareXLog {
      * @param msg The message you would like logged.
      */
     public void w(String msg) {
-        NetBareLog.w(mPrefix + msg);
+        EL.w(mPrefix + msg);
     }
 
     /**
@@ -168,7 +168,7 @@ public final class NetBareXLog {
      * @param args Arguments referenced by the format specifiers in the format string.
      */
     public void w(String msg, Object... args) {
-        NetBareLog.w(mPrefix + msg, args);
+        EL.w(mPrefix + msg, args);
     }
 
 }

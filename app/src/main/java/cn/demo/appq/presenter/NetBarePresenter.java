@@ -7,11 +7,11 @@ import android.text.TextUtils;
 import com.github.megatronking.netbare.NetBare;
 import com.github.megatronking.netbare.NetBareConfig;
 import com.github.megatronking.netbare.NetBareListener;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.http.HttpInjectInterceptor;
 import com.github.megatronking.netbare.http.HttpInterceptorFactory;
 import com.github.megatronking.netbare.ssl.JKS;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +46,8 @@ public class NetBarePresenter implements BasePresenter {
                 try {
                     JKS.install(activity.getApplicationContext(),
                             App.JSK_ALIAS, App.JSK_ALIAS);
-                } catch (IOException e) {
-                    // 安装失败
+                } catch (Throwable e) {
+                    EL.e(e);
                 }
             }
         }

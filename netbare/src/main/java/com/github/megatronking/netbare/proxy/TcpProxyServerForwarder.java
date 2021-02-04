@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.proxy;
 
 import android.net.VpnService;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.ip.IpHeader;
 import com.github.megatronking.netbare.ip.Protocol;
@@ -68,10 +68,10 @@ public final class TcpProxyServerForwarder implements ProxyServerForwarder {
         // TCP data size
         int tcpDataSize = ipHeader.getDataLength() - tcpHeader.getHeaderLength();
 
-        NetBareLog.v("ip: %s:%d -> %s:%d", NetBareUtils.convertIp(localIp),
+        EL.v("ip: %s:%d -> %s:%d", NetBareUtils.convertIp(localIp),
                 NetBareUtils.convertPort(localPort), NetBareUtils.convertIp(remoteIp),
                 NetBareUtils.convertPort(remotePort));
-        NetBareLog.v("tcp: %s, size: %d", tcpHeader.toString(), tcpDataSize);
+        EL.v("tcp: %s, size: %d", tcpHeader.toString(), tcpDataSize);
 
         // Tcp handshakes and proxy forward flow.
 
@@ -106,7 +106,7 @@ public final class TcpProxyServerForwarder implements ProxyServerForwarder {
             // Proxy server responses forward client request.
             Session session = mSessionProvider.query(remotePort);
             if (session == null) {
-                NetBareLog.w("No session saved with key: " + remotePort);
+                EL.w("No session saved with key: " + remotePort);
                 return;
             }
             // Forward proxy server response to client.
@@ -123,7 +123,7 @@ public final class TcpProxyServerForwarder implements ProxyServerForwarder {
         try {
             output.write(packet, 0, len);
         } catch (IOException e) {
-            NetBareLog.e(e.getMessage());
+            EL.e(e.getMessage());
         }
     }
 

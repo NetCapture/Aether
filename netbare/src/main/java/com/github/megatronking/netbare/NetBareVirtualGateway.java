@@ -54,7 +54,7 @@ public final class NetBareVirtualGateway extends VirtualGateway {
 
     private final VirtualGateway mGateway;
     private final Session mSession;
-    private final NetBareXLog mLog;
+    private final XLog mLog;
 
     private int mPolicy;
 
@@ -65,7 +65,7 @@ public final class NetBareVirtualGateway extends VirtualGateway {
         super(session, request, response);
         mGateway = NetBare.get().getGatewayFactory().create(session, request, response);
         mSession = session;
-        mLog = new NetBareXLog(session);
+        mLog = new XLog(session);
 
         NetBareConfig config = NetBare.get().getConfig();
         if (config == null || (config.excludeSelf && session.uid == Process.myUid())) {

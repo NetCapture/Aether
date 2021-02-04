@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.proxy;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 
 import java.io.IOException;
 
@@ -61,7 +61,7 @@ import java.io.IOException;
             try {
                 process();
             } catch (IOException e) {
-                NetBareLog.e(e.getMessage());
+                EL.e(e.getMessage());
             }
         }
     }

@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.proxy;
 
 import android.net.VpnService;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.ip.IpHeader;
 import com.github.megatronking.netbare.ip.Protocol;
@@ -68,10 +68,10 @@ public final class UdpProxyServerForwarder implements ProxyServerForwarder {
         // UDP data size
         int udpDataSize = ipHeader.getDataLength() - udpHeader.getHeaderLength();
 
-        NetBareLog.v("ip: %s:%d -> %s:%d", NetBareUtils.convertIp(localIp),
+        EL.v("ip: %s:%d -> %s:%d", NetBareUtils.convertIp(localIp),
                 NetBareUtils.convertPort(localPort), NetBareUtils.convertIp(remoteIp),
                 NetBareUtils.convertPort(remotePort));
-        NetBareLog.v("udp: %s, size: %d", udpHeader.toString(), udpDataSize);
+        EL.v("udp: %s, size: %d", udpHeader.toString(), udpDataSize);
 
         Session session = mSessionProvider.ensureQuery(Protocol.UDP, localPort, remotePort, remoteIp);
         session.packetIndex++;
@@ -80,7 +80,7 @@ public final class UdpProxyServerForwarder implements ProxyServerForwarder {
             mProxyServer.send(udpHeader, output);
             session.sendDataSize += udpDataSize;
         } catch (IOException e) {
-            NetBareLog.e(e.getMessage());
+            EL.e(e.getMessage());
         }
     }
 

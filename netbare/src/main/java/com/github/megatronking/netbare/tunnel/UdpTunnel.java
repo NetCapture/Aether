@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.tunnel;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 
 import java.io.IOException;
 import java.net.DatagramSocket;
@@ -41,7 +41,7 @@ public abstract class UdpTunnel extends NioTunnel<DatagramChannel, DatagramSocke
 
     @Override
     public void connect(InetSocketAddress address) throws IOException {
-        NetBareLog.i("UDP connects to: %s:%s",
+        EL.i("UDP connects to: %s:%s",
                 address.getAddress().getHostAddress(), address.getPort());
         if (mDatagramChannel.isBlocking()) {
             mDatagramChannel.configureBlocking(false);

@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.proxy;
 
 import android.net.VpnService;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.gateway.VirtualGateway;
 import com.github.megatronking.netbare.net.Session;
@@ -86,7 +86,7 @@ import javax.net.ssl.SSLHandshakeException;
         this.mPort = (short) mServerSocketChannel.socket().getLocalPort();
         this.mMtu = mtu;
 
-        NetBareLog.v("[TCP]proxy server: %s:%d", ip, NetBareUtils.convertPort(mPort));
+        EL.v("[TCP]proxy server: %s:%d", ip, NetBareUtils.convertPort(mPort));
     }
 
     void setSessionProvider(SessionProvider sessionProvider) {
@@ -106,11 +106,11 @@ import javax.net.ssl.SSLHandshakeException;
 
     @Override
     public void run() {
-        NetBareLog.i("[TCP]Server starts running.");
+        EL.i("[TCP]Server starts running.");
         super.run();
         NetBareUtils.closeQuietly(mSelector);
         NetBareUtils.closeQuietly(mServerSocketChannel);
-        NetBareLog.i("[TCP]Server stops running.");
+        EL.i("[TCP]Server stops running.");
     }
 
     @Override
@@ -205,24 +205,24 @@ import javax.net.ssl.SSLHandshakeException;
         }
         if (e instanceof SSLHandshakeException) {
             // Client doesn't accept the MITM CA certificate.
-            NetBareLog.e(e.getMessage());
+            EL.e(e.getMessage());
             if (ip != null) {
-                NetBareLog.i("add %s to whitelist", ip);
+                EL.i("add %s to whitelist", ip);
                 SSLWhiteList.add(ip);
             }
         } else if (e instanceof ConnectionShutdownException) {
             // Connection exception, do not mind this.
-            NetBareLog.e(e.getMessage());
+            EL.e(e.getMessage());
         } else if (e instanceof ConnectException) {
             // Connection timeout
-            NetBareLog.e(e.getMessage());
+            EL.e(e.getMessage());
         } else if (e instanceof SSLException && (e.getCause() instanceof EOFException)) {
             // Connection shutdown manually
-            NetBareLog.e(e.getMessage());
+            EL.e(e.getMessage());
         } else {
-            NetBareLog.wtf(e);
+            EL.wtf(e);
             if (ip != null) {
-                NetBareLog.i("add %s to whitelist", ip);
+                EL.i("add %s to whitelist", ip);
                 SSLWhiteList.add(ip);
             }
         }

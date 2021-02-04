@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.http;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.ip.Protocol;
 
 import java.io.IOException;
@@ -38,7 +38,7 @@ import java.nio.ByteBuffer;
     private final HttpZygoteResponse mZygoteResponse;
 
     private int mResponseIndex;
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     private boolean mWebSocket;
 
@@ -61,7 +61,7 @@ import java.nio.ByteBuffer;
         }
         if (mResponseIndex > 0 && !mWebSocket) {
             if (mLog == null) {
-                mLog = new NetBareXLog(Protocol.TCP, chain.request().ip(), chain.request().port());
+                mLog = new XLog(Protocol.TCP, chain.request().ip(), chain.request().port());
             }
             mResponseIndex = 0;
             mLog.w("Multiplex is found in one connection.");

@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.http;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.ip.Protocol;
 import com.google.common.primitives.Bytes;
@@ -36,13 +36,13 @@ import java.nio.ByteBuffer;
     private boolean mRequestHeaderHandled;
     private boolean mResponseHeaderHandled;
 
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     @Override
     protected void intercept(@NonNull HttpRequestChain chain, @NonNull ByteBuffer buffer, int index)
             throws IOException {
         if (mLog == null) {
-            mLog = new NetBareXLog(Protocol.TCP, chain.request().ip(), chain.request().port());
+            mLog = new XLog(Protocol.TCP, chain.request().ip(), chain.request().port());
         }
         if (mRequestHeaderHandled) {
             chain.process(buffer);
@@ -84,7 +84,7 @@ import java.nio.ByteBuffer;
     protected void intercept(@NonNull HttpResponseChain chain, @NonNull ByteBuffer buffer, int index)
             throws IOException {
         if (mLog == null) {
-            mLog = new NetBareXLog(Protocol.TCP, chain.response().ip(), chain.response().port());
+            mLog = new XLog(Protocol.TCP, chain.response().ip(), chain.response().port());
         }
         if (mResponseHeaderHandled) {
             chain.process(buffer);

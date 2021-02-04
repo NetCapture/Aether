@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.security.KeyChain;
 import android.support.annotation.Nullable;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class CertificateInstallActivity extends Activity {
         try {
             startActivityForResult(intent, REQUEST_CODE_INSTALL);
         } catch (ActivityNotFoundException e) {
-            NetBareLog.e("Unable to start certificate installer.");
+            EL.e("Unable to start certificate installer.");
             finish();
         }
     }
@@ -59,15 +59,19 @@ public class CertificateInstallActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        EL.i("inside CertificateInstallActivity.onActivityResult requestCode: " + requestCode);
         if (requestCode == REQUEST_CODE_INSTALL && resultCode == RESULT_OK) {
             File jsk = new File(getCacheDir(),
                     getIntent().getStringExtra(EXTRA_ALIAS) + JKS.KEY_JKS_FILE_EXTENSION);
+
+            EL.i("inside CertificateInstallActivity.onActivityResult jsk file: " + jsk.getAbsolutePath());
+
             try {
-                if(!jsk.exists() && !jsk.createNewFile()) {
+                if (!jsk.exists() && !jsk.createNewFile()) {
                     throw new IOException("Create jks file failed.");
                 }
-            } catch (IOException e) {
-                NetBareLog.wtf(e);
+            } catch (Throwable e) {
+                EL.wtf(e);
             }
         }
         finish();

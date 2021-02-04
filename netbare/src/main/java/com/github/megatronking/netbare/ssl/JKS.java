@@ -21,7 +21,7 @@ import android.content.Intent;
 import android.security.KeyChain;
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.NetBareUtils;
 
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
@@ -100,19 +100,22 @@ public class JKS {
         return certOrganizationalUnitName;
     }
 
-    public boolean isInstalled() {
-        return aliasFile(KEY_STORE_FILE_EXTENSION).exists() &&
-                aliasFile(KEY_PEM_FILE_EXTENSION).exists() &&
-                aliasFile(KEY_JKS_FILE_EXTENSION).exists();
-    }
+//    public boolean isInstalled() {
+//        return aliasFile(KEY_STORE_FILE_EXTENSION).exists() &&
+//                aliasFile(KEY_PEM_FILE_EXTENSION).exists() &&
+//                aliasFile(KEY_JKS_FILE_EXTENSION).exists();
+//    }
 
     public File aliasFile(String fileExtension) {
         return new File(keystoreDir, alias + fileExtension);
     }
 
     private void createKeystore() {
-        if (aliasFile(KEY_STORE_FILE_EXTENSION).exists() &&
-                aliasFile(KEY_PEM_FILE_EXTENSION).exists()) {
+        final File p12 = aliasFile(KEY_STORE_FILE_EXTENSION);
+        final File pem = aliasFile(KEY_PEM_FILE_EXTENSION);
+        EL.i("inside JKS.createKeystore ");
+        if (p12.exists() &&
+                pem.exists()) {
             return;
         }
 
@@ -127,17 +130,19 @@ public class JKS {
                 JcaPEMWriter pw = null;
                 try {
                     keystore = generator.generateRoot(JKS.this);
-                    os = new FileOutputStream(aliasFile(KEY_STORE_FILE_EXTENSION));
+                    os = new FileOutputStream(p12);
                     keystore.store(os, password());
 
                     Certificate cert = keystore.getCertificate(alias());
-                    sw = new FileWriter(aliasFile(KEY_PEM_FILE_EXTENSION));
+                    sw = new FileWriter(pem);
                     pw = new JcaPEMWriter(sw);
                     pw.writeObject(cert);
                     pw.flush();
-                    NetBareLog.i("Generate keystore succeed.");
-                } catch (Exception e) {
-                    NetBareLog.e(e.getMessage());
+                    EL.i("Generate keystore succeed.");
+                    EL.i("inside JKS.createKeystore ");
+
+                } catch (Throwable e) {
+                    EL.e(e);
                 } finally {
                     NetBareUtils.closeQuietly(os);
                     NetBareUtils.closeQuietly(sw);
@@ -151,20 +156,22 @@ public class JKS {
      * Whether the certificate with given alias has been installed.
      *
      * @param context Any context.
-     * @param alias Key store alias.
+     * @param alias   Key store alias.
      * @return True if the certificate has been installed.
      */
     public static boolean isInstalled(Context context, String alias) {
-        return new File(context.getCacheDir(),
-                alias + KEY_JKS_FILE_EXTENSION).exists();
+        File f = new File(context.getCacheDir(),
+                alias + KEY_JKS_FILE_EXTENSION);
+        EL.i("inside JKS.isInstalled(),  alias file:" + f.getAbsolutePath());
+        return f.exists();
     }
 
     /**
      * Install the self-signed root certificate.
      *
      * @param context Any context.
-     * @param name Key chain name.
-     * @param alias Key store alias.
+     * @param name    Key chain name.
+     * @param alias   Key store alias.
      * @throws IOException If an IO error has occurred.
      */
     public static void install(Context context, String name, String alias)

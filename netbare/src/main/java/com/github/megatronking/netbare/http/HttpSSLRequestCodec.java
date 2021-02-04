@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.http;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 import com.github.megatronking.netbare.ssl.SSLEngineFactory;
 import com.github.megatronking.netbare.ssl.SSLRequestCodec;
 
@@ -85,7 +85,7 @@ import javax.net.ssl.SSLEngine;
             }
         } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException |
                 InvocationTargetException e) {
-            NetBareLog.wtf(e);
+            EL.wtf(e);
         }
         return sslEngine;
     }

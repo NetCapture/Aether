@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.tunnel;
 
 import android.net.VpnService;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.ip.Protocol;
 
 import java.io.IOException;
@@ -36,13 +36,13 @@ public class TcpRemoteTunnel extends TcpTunnel {
 
     private final VpnService mVpnService;
 
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     public TcpRemoteTunnel(VpnService vpnService, SocketChannel channel, Selector selector,
                            String remoteIp, int remotePort) {
         super(channel, selector);
         this.mVpnService = vpnService;
-        this.mLog = new NetBareXLog(Protocol.TCP, remoteIp, remotePort);
+        this.mLog = new XLog(Protocol.TCP, remoteIp, remotePort);
     }
 
     @Override

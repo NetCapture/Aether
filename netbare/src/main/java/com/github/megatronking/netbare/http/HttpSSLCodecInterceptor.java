@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.http;
 
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.gateway.Request;
 import com.github.megatronking.netbare.gateway.Response;
 import com.github.megatronking.netbare.ip.Protocol;
@@ -45,7 +45,7 @@ import java.nio.ByteBuffer;
     private HttpSSLRequestCodec mRequestCodec;
     private HttpSSLResponseCodec mResponseCodec;
 
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     private boolean mClientAlpnResolved;
 
@@ -56,7 +56,7 @@ import java.nio.ByteBuffer;
         mRequestCodec = new HttpSSLRequestCodec(engineFactory);
         mResponseCodec = new HttpSSLResponseCodec(engineFactory);
 
-        mLog = new NetBareXLog(Protocol.TCP, request.ip(), request.port());
+        mLog = new XLog(Protocol.TCP, request.ip(), request.port());
     }
 
     @Override

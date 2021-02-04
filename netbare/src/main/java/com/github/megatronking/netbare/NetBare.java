@@ -77,7 +77,7 @@ public final class NetBare {
      */
     public NetBare attachApplication(@NonNull Application application, boolean debug) {
         mApp = application;
-        NetBareLog.getInstance().setDebug(debug);
+        EL.getInstance().setDebug(debug);
         return this;
     }
 

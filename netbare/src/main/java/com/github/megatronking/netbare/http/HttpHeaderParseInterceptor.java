@@ -18,7 +18,7 @@ package com.github.megatronking.netbare.http;
 import android.support.annotation.NonNull;
 
 import com.github.megatronking.netbare.NetBareUtils;
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.ip.Protocol;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ import java.util.List;
  */
 /* package */ final class HttpHeaderParseInterceptor extends HttpIndexedInterceptor {
 
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     @Override
     protected void intercept(@NonNull HttpRequestChain chain, @NonNull ByteBuffer buffer,
@@ -45,7 +45,7 @@ import java.util.List;
             return;
         }
         if (mLog == null) {
-            mLog = new NetBareXLog(Protocol.TCP, chain.request().ip(), chain.request().port());
+            mLog = new XLog(Protocol.TCP, chain.request().ip(), chain.request().port());
         }
         parseRequestHeader(chain.request().session(), buffer);
         chain.process(buffer);
@@ -59,7 +59,7 @@ import java.util.List;
             return;
         }
         if (mLog == null) {
-            mLog = new NetBareXLog(Protocol.TCP, chain.response().ip(), chain.response().port());
+            mLog = new XLog(Protocol.TCP, chain.response().ip(), chain.response().port());
         }
         parseResponseHeader(chain.response().session(), buffer);
         chain.process(buffer);

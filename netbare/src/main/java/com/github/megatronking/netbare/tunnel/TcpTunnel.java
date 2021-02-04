@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.tunnel;
 
-import com.github.megatronking.netbare.NetBareLog;
+import com.github.megatronking.netbare.EL;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -44,7 +44,7 @@ public abstract class TcpTunnel extends NioTunnel<SocketChannel, Socket> {
 
     @Override
     public void connect(InetSocketAddress address) throws IOException {
-        NetBareLog.i("TCP connects to: %s:%s",
+        EL.i("TCP connects to: %s:%s",
                 address.getAddress().getHostAddress(), address.getPort());
         if (mSocketChannel.isBlocking()) {
             mSocketChannel.configureBlocking(false);

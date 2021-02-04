@@ -17,7 +17,7 @@ package com.github.megatronking.netbare.tunnel;
 
 import android.net.VpnService;
 
-import com.github.megatronking.netbare.NetBareXLog;
+import com.github.megatronking.netbare.XLog;
 import com.github.megatronking.netbare.ip.Protocol;
 
 import java.io.IOException;
@@ -35,13 +35,13 @@ import java.nio.channels.Selector;
 public class UdpRemoteTunnel extends UdpTunnel {
 
     private final VpnService mVpnService;
-    private NetBareXLog mLog;
+    private XLog mLog;
 
     public UdpRemoteTunnel(VpnService vpnService, DatagramChannel channel, Selector selector,
                            String remoteIp, short remotePort) {
         super(channel, selector);
         this.mVpnService = vpnService;
-        this.mLog = new NetBareXLog(Protocol.UDP, remoteIp, remotePort);
+        this.mLog = new XLog(Protocol.UDP, remoteIp, remotePort);
     }
 
     @Override

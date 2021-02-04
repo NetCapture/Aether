@@ -18,7 +18,6 @@ package com.github.megatronking.netbare;
 import android.content.pm.PackageManager;
 import android.net.VpnService;
 import android.os.ParcelFileDescriptor;
-import android.os.SystemClock;
 
 import com.github.megatronking.netbare.ip.IpAddress;
 import com.github.megatronking.netbare.ip.IpHeader;
@@ -82,7 +81,7 @@ import java.util.Map;
 		try {
 			packetsTransfer = new PacketsTransfer(mVpnService, mConfig);
 		} catch (IOException e) {
-			NetBareLog.wtf(e);
+			EL.wtf(e);
 		}
 		if (packetsTransfer != null) {
 			// Establish VPN, it runs a while loop unless failed.
@@ -123,7 +122,7 @@ import java.util.Map;
 				builder.addAllowedApplication(mVpnService.getPackageName());
 			}
 		} catch (PackageManager.NameNotFoundException e) {
-			NetBareLog.wtf(e);
+			EL.wtf(e);
 		}
 		vpnDescriptor = builder.establish();
 		if (vpnDescriptor == null) {
@@ -147,7 +146,7 @@ import java.util.Map;
 			}
 		} catch (IOException e) {
 			if (!isInterrupted()) {
-				NetBareLog.wtf(e);
+				EL.wtf(e);
 			}
 		}
 	}
@@ -196,7 +195,7 @@ import java.util.Map;
 
 		private void transfer(byte[] packet, int len, OutputStream output) {
 			if (len < IpHeader.MIN_HEADER_LENGTH) {
-				NetBareLog.w("Ip header length < " + IpHeader.MIN_HEADER_LENGTH);
+				EL.w("Ip header length < " + IpHeader.MIN_HEADER_LENGTH);
 				return;
 			}
 			IpHeader ipHeader = new IpHeader(packet, 0);
@@ -205,7 +204,7 @@ import java.util.Map;
 			if (forwarder != null) {
 				forwarder.forward(packet, len, output);
 			} else {
-				NetBareLog.w("Unknown ip protocol: " + ipHeader.getProtocol());
+				EL.w("Unknown ip protocol: " + ipHeader.getProtocol());
 			}
 		}
 
