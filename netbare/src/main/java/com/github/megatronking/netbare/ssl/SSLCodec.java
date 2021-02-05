@@ -18,7 +18,7 @@ package com.github.megatronking.netbare.ssl;
 import android.os.Build;
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 
 import java.io.EOFException;
 import java.io.IOException;

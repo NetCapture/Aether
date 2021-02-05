@@ -22,6 +22,7 @@ import android.net.VpnService;
 import android.support.annotation.NonNull;
 
 import com.github.megatronking.netbare.ssl.SSLEngineFactory;
+import com.sanbo.utils.EL;
 
 /**
  * Base class for NetBare services.

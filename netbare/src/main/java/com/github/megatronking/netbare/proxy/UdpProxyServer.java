@@ -18,7 +18,7 @@ package com.github.megatronking.netbare.proxy;
 import android.net.VpnService;
 import android.os.SystemClock;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.gateway.VirtualGateway;
 import com.github.megatronking.netbare.ip.IpHeader;

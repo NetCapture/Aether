@@ -18,7 +18,7 @@ package com.github.megatronking.netbare.http;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 import com.github.megatronking.netbare.ssl.SSLEngineFactory;
 import com.github.megatronking.netbare.ssl.SSLResponseCodec;
 

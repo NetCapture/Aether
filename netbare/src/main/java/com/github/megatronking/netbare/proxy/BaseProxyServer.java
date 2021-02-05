@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.proxy;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 
 import java.io.IOException;
 

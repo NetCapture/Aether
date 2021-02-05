@@ -22,7 +22,7 @@ import android.os.Bundle;
 import android.security.KeyChain;
 import android.support.annotation.Nullable;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 
 import java.io.File;
 import java.io.IOException;

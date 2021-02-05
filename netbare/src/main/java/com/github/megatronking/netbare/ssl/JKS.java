@@ -21,7 +21,7 @@ import android.content.Intent;
 import android.security.KeyChain;
 import android.support.annotation.NonNull;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 import com.github.megatronking.netbare.NetBareUtils;
 
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;

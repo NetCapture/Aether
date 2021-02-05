@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.ssl;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 import com.github.megatronking.netbare.gateway.Request;
 
 import java.util.concurrent.ExecutionException;

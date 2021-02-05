@@ -13,7 +13,7 @@
  *  You should have received a copy of the GNU General Public License along with NetBare.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.megatronking.netbare;
+package com.sanbo.utils;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -25,6 +25,8 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
+
+import com.github.megatronking.netbare.XLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;

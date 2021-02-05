@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.tunnel;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

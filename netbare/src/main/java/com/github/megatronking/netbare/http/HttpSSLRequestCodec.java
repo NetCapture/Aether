@@ -15,7 +15,7 @@
  */
 package com.github.megatronking.netbare.http;
 
-import com.github.megatronking.netbare.EL;
+import com.sanbo.utils.EL;
 import com.github.megatronking.netbare.ssl.SSLEngineFactory;
 import com.github.megatronking.netbare.ssl.SSLRequestCodec;
 
