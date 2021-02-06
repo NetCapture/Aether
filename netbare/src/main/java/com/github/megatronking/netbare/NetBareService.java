@@ -31,7 +31,7 @@ import com.sanbo.utils.EL;
  * route incoming and outgoing net packets. The NetBare service are forced to display a notification
  * due to intercepting packets raises huge security concerns.
  * </p>
- * <P>
+ * <p>
  * The NetBare service is managed by {@link NetBare}, and you can use {@link NetBareListener} to
  * observe the state.
  * </P>
@@ -103,8 +103,7 @@ public abstract class NetBareService extends VpnService {
 
         NetBareConfig config = NetBare.get().getConfig();
         if (config == null) {
-            throw new IllegalArgumentException("Must start NetBareService with a " +
-                    "NetBareConfig");
+            throw new IllegalArgumentException("Must start NetBareService with a  NetBareConfig");
         }
 
         EL.i("Start NetBare service!");
