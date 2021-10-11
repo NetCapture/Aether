@@ -33,7 +33,7 @@ import java.util.Set;
  * NetBare is a single instance, we can use this class to config and manage the NetBare service.
  * The NetBare service is an implement class of {@link VpnService}, before starting this service,
  * should call {@link #prepare()} to check the vpn state.
- *
+ * <p>
  * Start and stop the NetBare service:
  * <pre>
  * <code>
@@ -68,12 +68,16 @@ public final class NetBare {
         mListeners = new LinkedHashSet<>();
     }
 
+    public NetBare attachApplication(@NonNull Application application) {
+        return attachApplication(application, false);
+    }
+
     /**
      * Attach an application instance to NetBare. We recommend you to call this method in your
      * {@link Application} class.
      *
      * @param application The application instance.
-     * @param debug Should print logs in console.
+     * @param debug       Should print logs in console.
      * @return The single instance of NetBare.
      */
     public NetBare attachApplication(@NonNull Application application, boolean debug) {
