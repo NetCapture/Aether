@@ -55,6 +55,15 @@ public class NetHttpInject implements HttpInjector {
                 .queryBuilder()
                 .where(ReqEntityDao.Properties.SessionId.eq(request.id()))
                 .list();
+        String pkg = App.getProcessNameByUid(request.uid());
+        Log.i("sanbo.url","pkg:"+pkg
+                +"\r\n\t URL:"+request.url()
+                +"\r\n\t protocol:"+request.protocol().toString()
+                +"\r\n\t httpProtocol:"+request.httpProtocol().toString()
+                +"\r\n\t method:"+request.method().name()
+                +"\r\n\t isHttps:"+request.isHttps()
+                +"\r\n\t Header:"+GsonUtils.toJson(request.requestHeaders())
+        );
         if (reqEntities != null && reqEntities.size() > 0) {
             ReqEntity entity = reqEntities.get(0);
             if (RECORD_REQUEST_BODY){
