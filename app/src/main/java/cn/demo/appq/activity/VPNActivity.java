@@ -291,8 +291,8 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
                 requestVpnPermission();
                 break;
             case R.id.menu_info:
-                // 启动流量统计Web服务器
-                openTrafficStatisticsWeb();
+                // 选择流量统计查看方式
+                openTrafficStatistics();
                 break;
             case R.id.menu_install_cert:
                 installCertificateToDownloads();
@@ -529,7 +529,33 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     * 打开流量统计Web界面
+     * 打开流量统计 - 选择查看方式
+     */
+    private void openTrafficStatistics() {
+        new android.app.AlertDialog.Builder(VPNActivity.this)
+            .setTitle("流量统计")
+            .setMessage("请选择查看方式：")
+            .setPositiveButton("本机查看（推荐）", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // 启动本地列表视图
+                    Intent intent = new Intent(VPNActivity.this, TrafficListActivity.class);
+                    startActivity(intent);
+                }
+            })
+            .setNegativeButton("局域网查看（电脑访问）", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // 启动Web服务器
+                    openTrafficStatisticsWeb();
+                }
+            })
+            .setNeutralButton("取消", null)
+            .show();
+    }
+
+    /**
+     * 打开流量统计Web界面（局域网访问）
      */
     private void openTrafficStatisticsWeb() {
         try {
@@ -539,21 +565,34 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
             }
 
             String serverUrl = trafficHttpServer.getServerUrl();
+            String localIp = getLocalIpAddress();
+
+            // 构建访问URL
+            StringBuilder accessInfo = new StringBuilder();
+            accessInfo.append("🌐 流量统计Web服务器已启动！\n\n");
+            accessInfo.append("📱 本机访问：http://localhost:8080\n");
+            if (localIp != null) {
+                accessInfo.append("💻 局域网访问：http://").append(localIp).append(":8080\n");
+            }
+            accessInfo.append("\n📋 使用说明：\n");
+            accessInfo.append("1. 确保手机和电脑在同一WiFi网络\n");
+            accessInfo.append("2. 在电脑浏览器中打开局域网地址\n");
+            accessInfo.append("3. 可以查看详细的流量统计排行\n\n");
+            accessInfo.append("✨ 功能特色：\n");
+            accessInfo.append("• 📊 按应用查看流量排行\n");
+            accessInfo.append("• 🌐 按域名查看流量排行\n");
+            accessInfo.append("• 🔗 按URL汇总统计\n");
+            accessInfo.append("• 🔍 详细请求信息查看\n");
+            accessInfo.append("• ⏱️ 实时数据监控\n");
+            accessInfo.append("• 📱 响应式设计，支持手机/电脑\n\n");
+            if (localIp != null) {
+                accessInfo.append("🌍 局域网地址：").append(localIp).append(":8080");
+            }
 
             // 显示访问信息对话框
             new android.app.AlertDialog.Builder(VPNActivity.this)
                 .setTitle("流量统计Web界面")
-                .setMessage("Web服务器已启动！\n\n" +
-                        "访问地址：" + serverUrl + "\n\n" +
-                        "使用说明：\n" +
-                        "1. 确保手机和电脑在同一WiFi网络\n" +
-                        "2. 在电脑浏览器中打开上述地址\n" +
-                        "3. 可以查看详细的流量统计排行\n\n" +
-                        "功能特色：\n" +
-                        "• 按应用查看流量排行\n" +
-                        "• 按域名查看流量排行\n" +
-                        "• 最近请求记录\n" +
-                        "• 实时数据统计")
+                .setMessage(accessInfo.toString())
                 .setPositiveButton("在浏览器中打开", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -566,26 +605,54 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
                         }
                     }
                 })
-                .setNegativeButton("仅启动服务器", null)
-                .setNeutralButton("复制地址", new DialogInterface.OnClickListener() {
+                .setNegativeButton("复制局域网地址", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // 复制地址到剪贴板
-                        android.content.ClipboardManager clipboard =
-                            (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                        if (clipboard != null) {
-                            android.content.ClipData clip = android.content.ClipData.newPlainText("Traffic Stats URL", serverUrl);
-                            clipboard.setPrimaryClip(clip);
-                            Toast.makeText(VPNActivity.this, "地址已复制到剪贴板", Toast.LENGTH_SHORT).show();
+                        if (localIp != null) {
+                            String lanUrl = "http://" + localIp + ":8080";
+                            // 复制地址到剪贴板
+                            android.content.ClipboardManager clipboard =
+                                (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                            if (clipboard != null) {
+                                android.content.ClipData clip = android.content.ClipData.newPlainText("Traffic Stats LAN URL", lanUrl);
+                                clipboard.setPrimaryClip(clip);
+                                Toast.makeText(VPNActivity.this, "局域网地址已复制到剪贴板", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(VPNActivity.this, "无法获取本机IP", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
+                .setNeutralButton("关闭", null)
                 .show();
 
         } catch (Exception e) {
             Log.e("VPNActivity", "Failed to start traffic statistics web server", e);
             Toast.makeText(this, "启动Web服务器失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    /**
+     * 获取本机局域网IP地址
+     */
+    private String getLocalIpAddress() {
+        try {
+            java.net.NetworkInterface networkInterface = java.net.NetworkInterface.getByName("wlan0");
+            if (networkInterface == null) {
+                // 尝试其他接口名
+                networkInterface = java.net.NetworkInterface.getByName("eth0");
+            }
+            if (networkInterface != null) {
+                for (java.net.InetAddress inetAddress : java.util.Collections.list(networkInterface.getInetAddresses())) {
+                    if (!inetAddress.isLoopbackAddress() && inetAddress instanceof java.net.Inet4Address) {
+                        return inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e("VPNActivity", "Failed to get local IP", e);
+        }
+        return null;
     }
 
     @Override

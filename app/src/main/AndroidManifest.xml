@@ -47,6 +47,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activity.TrafficListActivity"
+            android:exported="false"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
         <service
             android:name=".service.AppService"
             android:exported="false"
