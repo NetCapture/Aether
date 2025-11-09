@@ -9,3 +9,13 @@ gradle.properties
 gradlew
 gradlew.bat
 .externalNativeBuild
+
+# Backup files
+*.bak
+*.swp
+*.tmp
+*~
+
+# OS generated files
+Thumbs.db
+ehthumbs.db

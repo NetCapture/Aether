@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.VPNActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -34,12 +34,7 @@
             android:layout_height="300dp"
             android:layout_margin="40dp"
             android:gravity="center_vertical"
-            android:text="欢迎使用：\n\n
-1. 首次安装使用需配置证书。\n
-2. 点击右下方按钮，启动抓包。\n
-3. 点击单个链接可查看详细报文。\n
-4. 点击流量使用排行，电脑打开提示链接。\n
-5. 需注意手机与电脑请保持在同一局域网内。
+            android:text="欢迎使用：\n\n1. 首次安装使用需配置证书。\n2. 点击右下方按钮，启动抓包。\n3. 点击单个链接可查看详细报文。\n4. 点击流量使用排行，电脑打开提示链接。\n5. 需注意手机与电脑请保持在同一局域网内。
 "
             android:textColor="#000000"
             android:textSize="16sp"
@@ -48,7 +43,7 @@
 
         </TextView>
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/srl_ref"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -56,17 +51,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_logs"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <com.github.clans.fab.FloatingActionMenu
@@ -134,7 +129,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_setting_name"
             android:visibility="gone"
-            app:fab_label="配置证书(首次安装1)"
+            app:fab_label="证书配置/安装"
             app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
@@ -162,7 +157,15 @@
             app:fab_label="流量统计排行"
             app:fab_size="mini" />
 
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_install_cert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_setting_name"
+            app:fab_label="安装证书"
+            app:fab_size="mini" />
+
     </com.github.clans.fab.FloatingActionMenu>
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

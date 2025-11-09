@@ -1,7 +1,8 @@
 package cn.demo.appq.Interceptor;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.GsonUtils;
@@ -27,6 +28,8 @@ import cn.demo.appq.utils.IOUtils;
 public class NetHttpInject implements HttpInjector {
     private static final String TAG = "TestHttpInject";
     private static final boolean RECORD_REQUEST_BODY = true;
+    // SQLite单行最大容量约2MB，使用1.5MB作为安全阈值
+    private static final int MAX_CONTENT_SIZE = 1536 * 1024;
 
     @Override
     public boolean sniffRequest(@NonNull HttpRequest request) {
@@ -66,14 +69,16 @@ public class NetHttpInject implements HttpInjector {
                 ByteBuffer newBuffer = ByteBuffer.allocate(prebuffer.limit() + nextBuffer.limit());
                 newBuffer.put(prebuffer);
                 newBuffer.put(nextBuffer);
-                if(newBuffer.limit()>=2048*1024*3.0f/4){
-                    // SqlLite 单行最大容量是 2M
-                    return;
+                // 始终统计流量大小，无论是否记录内容
+                entity.setLength(entity.getLength() + nextBuffer.limit());
+                if(newBuffer.limit() >= MAX_CONTENT_SIZE){
+                    // 数据量超过SQLite单行最大容量，不再记录，但允许请求继续
+                    Log.w(TAG, "Request content exceeds maximum size, skipping record: " + request.id());
+                    DBManager.getInstance().getReqEntityDao().update(entity);
+                } else {
+                    entity.setReqContent(IOUtils.byteBuffer2String(newBuffer));
+                    DBManager.getInstance().getReqEntityDao().update(entity);
                 }
-                //更新流量消耗大小
-                entity.setLength(entity.getLength()+nextBuffer.limit());
-                entity.setReqContent(IOUtils.byteBuffer2String(newBuffer));
-                DBManager.getInstance().getReqEntityDao().update(entity);
             }
         } else {
             String packagename = App.getProcessNameByUid(request.uid());
@@ -138,11 +143,12 @@ public class NetHttpInject implements HttpInjector {
                 ByteBuffer newBuffer = ByteBuffer.allocate(prebuffer.limit() + nextBuffer.limit());
                 newBuffer.put(prebuffer);
                 newBuffer.put(nextBuffer);
-                if(newBuffer.limit()>=2048*1024*3.0f/4){
-                    // SqlLite 单行最大容量是 2M
-                    return;
+                if(newBuffer.limit() >= MAX_CONTENT_SIZE){
+                    // 数据量超过SQLite单行最大容量，不再记录，但允许响应继续
+                    Log.w(TAG, "Response content exceeds maximum size, skipping record: " + response.id());
+                } else {
+                    entity.setRespContent(IOUtils.byteBuffer2String(newBuffer));
                 }
-                entity.setRespContent(IOUtils.byteBuffer2String(newBuffer));
             }
             entity.setRespMessage(response.message());
             entity.setIsWebSocket(response.isWebSocket());

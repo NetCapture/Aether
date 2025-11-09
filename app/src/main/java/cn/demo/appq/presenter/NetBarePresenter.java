@@ -3,6 +3,7 @@ package cn.demo.appq.presenter;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.github.megatronking.netbare.NetBare;
 import com.github.megatronking.netbare.NetBareConfig;
@@ -11,6 +12,7 @@ import com.github.megatronking.netbare.http.HttpInjectInterceptor;
 import com.github.megatronking.netbare.http.HttpInterceptorFactory;
 import com.github.megatronking.netbare.ssl.JKS;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +42,40 @@ public class NetBarePresenter implements BasePresenter {
 
     public void prepareJks() {
         if (!mNetBare.isActive()) {
-            // 安装自签证书
+            // 生成自签证书（不自动安装）
             if (!JKS.isInstalled(activity.getApplicationContext(),
+                    App.JSK_ALIAS)) {
+                // 创建JKS对象会自动生成证书文件
+                new JKS(activity.getApplicationContext(),
+                        App.JSK_ALIAS,
+                        App.JSK_ALIAS.toCharArray(),
+                        "Aether CA",
+                        "Aether",
+                        "Aether Tool",
+                        "Aether",
+                        "Aether Tool");
+            }
+        }
+    }
+
+    public boolean isPrepareJks() {
+        return JKS.isInstalled(activity.getApplicationContext(),
+                App.JSK_ALIAS);
+    }
+
+    public boolean isJksFileGenerated() {
+        // 检查证书文件是否已生成（.p12和.pem文件）
+        File p12File = new File(activity.getApplicationContext().getCacheDir(),
+                App.JSK_ALIAS + JKS.KEY_STORE_FILE_EXTENSION);
+        File pemFile = new File(activity.getApplicationContext().getCacheDir(),
+                App.JSK_ALIAS + JKS.KEY_PEM_FILE_EXTENSION);
+        return p12File.exists() && pemFile.exists();
+    }
+
+    public void installJks() {
+        if (!mNetBare.isActive()) {
+            // 安装自签证书到系统
+            if (JKS.isInstalled(activity.getApplicationContext(),
                     App.JSK_ALIAS)) {
                 try {
                     JKS.install(activity.getApplicationContext(),
@@ -51,11 +85,6 @@ public class NetBarePresenter implements BasePresenter {
                 }
             }
         }
-    }
-
-    public boolean isPrepareJks() {
-        return JKS.isInstalled(activity.getApplicationContext(),
-                App.JSK_ALIAS);
     }
 
     public void prepareVpn() {
@@ -70,6 +99,11 @@ public class NetBarePresenter implements BasePresenter {
 
     public void startVpn() {
         if (!mNetBare.isActive()) {
+            // 确保证书JKS已正确初始化
+            if (App.getJKS() == null) {
+                throw new IllegalStateException("JKS not initialized");
+            }
+
             // 启动NetBare服务
             mNetBare.start(NetBareConfig.defaultHttpConfig(App.getJKS(),
                     interceptorFactories()));

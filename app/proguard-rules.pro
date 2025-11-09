@@ -1,21 +1,37 @@
 # Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
+# UtilCode library rules
+-keep class com.blankj.utilcode.** { *; }
+-dontwarn com.blankj.utilcode.**
+
+# NetBare library rules
+-keep class com.github.megatronking.netbare.** { *; }
+-dontwarn com.github.megatronking.netbare.**
+
+# GreenDAO rules
+-keep class org.greenrobot.greendao.** { *; }
+-keep class cn.demo.appq.greendao.** { *; }
+
+# Entity classes
+-keep class cn.demo.appq.entity.** { *; }
+
+# Hidden API access (Android 9+)
+# Allow reflection for utilcode
+-keepclassmembers class * {
+    @androidx.annotation.Keep *;
+}
+
+# Keep the Application class
+-keep public class * extends android.app.Application
+
+# If your project uses WebView with JS
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
+# Uncomment this to preserve the line number information
 #-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Enable obfuscation for release builds
+#-dontobfuscate

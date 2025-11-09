@@ -7,7 +7,7 @@ import com.github.megatronking.netbare.NetBare;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.ssl.JKS;
 
-import me.weishu.reflection.Reflection;
+//import me.weishu.reflection.Reflection;
 
 public class App extends Application {
 
@@ -39,7 +39,7 @@ public class App extends Application {
         super.attachBaseContext(base);
         // On android Q, we can't access Java8EngineWrapper with reflect.
         if (NetBareUtils.isAndroidQ()) {
-            Reflection.unseal(base);
+            //Reflection.unseal(base);
         }
     }
 

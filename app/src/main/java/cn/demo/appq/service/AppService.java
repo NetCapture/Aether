@@ -8,7 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.core.app.NotificationCompat;
 
 import com.github.megatronking.netbare.NetBareService;
 
@@ -44,8 +45,15 @@ public class AppService extends NetBareService {
         Intent intent = new Intent(this, VPNActivity.class);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         intent.setAction(Intent.ACTION_MAIN);
+
+        // Android 31+ requires FLAG_IMMUTABLE or FLAG_MUTABLE
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                this, 0, intent, flags);
 
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)

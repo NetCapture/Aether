@@ -343,10 +343,6 @@ public class ReqEntity {
         this.requestBodyOffset = requestBodyOffset;
     }
 
-    public void setResponseBodyOffset(Integer responseBodyOffset) {
-        this.responseBodyOffset = responseBodyOffset;
-    }
-
     public String getResponseHeaders() {
         return this.responseHeaders;
     }
