@@ -11,12 +11,17 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
+import com.github.megatronking.netbare.NetBare;
+import com.github.megatronking.netbare.NetBareListener;
 import com.github.megatronking.netbare.NetBareService;
 
 import cn.demo.appq.R;
 import cn.demo.appq.activity.VPNActivity;
+import cn.demo.appq.utils.TrafficHttpServer;
 
-public class AppService extends NetBareService {
+public class AppService extends NetBareService implements NetBareListener {
+
+    private TrafficHttpServer mHttpServer;
 
 
     private String CHANNEL_ID = "cn.demo.appq.NOTIFICATION_CHANNEL_ID";
@@ -25,6 +30,10 @@ public class AppService extends NetBareService {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // 注册NetBare监听器
+        NetBare.get().registerNetBareListener(this);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager.getNotificationChannel(CHANNEL_ID) == null) {
@@ -66,5 +75,34 @@ public class AppService extends NetBareService {
                 .build();
     }
 
+    @Override
+    public void onDestroy() {
+        // 取消注册监听器
+        NetBare.get().unregisterNetBareListener(this);
+
+        // 停止HTTP服务器
+        if (mHttpServer != null) {
+            mHttpServer.stop();
+            mHttpServer = null;
+        }
+
+        super.onDestroy();
+    }
+
+    @Override
+    public void onServiceStarted() {
+        // 启动HTTP服务器
+        mHttpServer = TrafficHttpServer.getInstance();
+        mHttpServer.start();
+    }
+
+    @Override
+    public void onServiceStopped() {
+        // 停止HTTP服务器
+        if (mHttpServer != null) {
+            mHttpServer.stop();
+            mHttpServer = null;
+        }
+    }
 
 }

@@ -132,7 +132,7 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_resp_message" />
 
 
-                <android.support.constraint.Group
+                <androidx.constraintlayout.widget.Group
                     android:id="@+id/group_resp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

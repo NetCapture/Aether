@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.VpnService;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,7 +29,10 @@ import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.megatronking.netbare.NetBareListener;
+import com.github.megatronking.netbare.ssl.JKS;
 import com.google.android.material.snackbar.Snackbar;
+
+import android.util.Log;
 
 import java.io.File;
 import java.util.List;
@@ -37,11 +41,19 @@ import cn.demo.appq.R;
 import cn.demo.appq.adapter.UrlAdapter;
 import cn.demo.appq.entity.ReqEntity;
 import cn.demo.appq.presenter.NetBarePresenter;
+import cn.demo.appq.utils.CertificateSaver;
 import cn.demo.appq.utils.DBManager;
+import cn.demo.appq.utils.TrafficHttpServer;
 import cn.demo.appq.view.NetBareView;
 import cn.demo.appq.App;
+import cn.demo.appq.vpn.JksManager;
+import cn.demo.appq.vpn.VpnServiceManager;
 
 public class VPNActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final int REQUEST_CODE_PREPARE = 1;
+    private static final int REQUEST_CODE_INSTALL_CERT = 2;
+    private static final int PERMISSION_REQUEST_CODE = 100;
 
     private NetBarePresenter netBarePresenter;
     private FloatingActionMenu fab;
@@ -59,12 +71,31 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
     private View menu_setting_vpn;
     private View menu_install_cert;
 
+    // 证书保存工具
+    private CertificateSaver certificateSaver;
+
+    // VPN服务管理器
+    private VpnServiceManager vpnServiceManager;
+
+    // 流量统计HTTP服务器
+    private TrafficHttpServer trafficHttpServer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_v_p_n);
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // 初始化证书保存工具
+        certificateSaver = new CertificateSaver(this);
+
+        // 初始化VPN服务管理器
+        vpnServiceManager = VpnServiceManager.getInstance(getApplicationContext());
+
+        // 初始化流量统计HTTP服务器
+        trafficHttpServer = TrafficHttpServer.getInstance();
+
         netBarePresenter = new NetBarePresenter(this, new NetBareListener() {
             @Override
             public void onServiceStarted() {
@@ -103,9 +134,49 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
-        netBarePresenter.prepareJks();
-        netBarePresenter.prepareVpn();
+        // 确保证书已生成
+        ensureJksReady();
         updateUIByVpnActive();
+    }
+
+    /**
+     * 确保证书已准备好
+     */
+    private void ensureJksReady() {
+        JksManager jksManager = JksManager.getInstance(getApplicationContext());
+        if (!jksManager.isReady()) {
+            // 异步生成证书
+            jksManager.initializeAsync(
+                    App.JSK_ALIAS,
+                    App.JSK_ALIAS.toCharArray(),
+                    "Aether CA",
+                    "Aether",
+                    "Aether Tool",
+                    "Aether",
+                    "Aether Tool",
+                    new JksManager.JksCallback() {
+                        @Override
+                        public void onSuccess(JKS jks) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(VPNActivity.this, "证书生成成功", Toast.LENGTH_SHORT).show();
+                                    updateUIByVpnActive();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(String error) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(VPNActivity.this, "证书生成失败: " + error, Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
+        }
     }
 
     private void updateUIByVpnActive() {
@@ -187,49 +258,11 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
                 netBarePresenter.queryByUrl(null);
                 break;
             case R.id.menu_stop:
-                netBarePresenter.stopVpn();
+                stopVpn();
                 break;
             case R.id.menu_start:
-                // 确保证书已生成
-                if (!netBarePresenter.isJksFileGenerated()) {
-                    // 如果证书未生成，先生成证书
-                    netBarePresenter.prepareJks();
-
-                    // 显示等待提示
-                    Snackbar.make(v, "正在生成证书，请稍候...", Snackbar.LENGTH_LONG)
-                            .setAction("重试", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    // 重新尝试启动VPN
-                                    startVpnWithCheck();
-                                }
-                            }).show();
-
-                    // 等待证书生成
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                // 等待证书生成完成
-                                while (!netBarePresenter.isJksFileGenerated()) {
-                                    Thread.sleep(500);
-                                }
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // 证书生成完成，启动VPN
-                                        startVpnWithCheck();
-                                    }
-                                });
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-                } else {
-                    // 证书已生成，直接启动VPN
-                    startVpnWithCheck();
-                }
+                // 启动VPN前需要先请求权限
+                requestVpnPermission();
                 break;
             case R.id.menu_setting:
                 if (!netBarePresenter.isJksFileGenerated()) {
@@ -255,19 +288,14 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
                 }
                 break;
             case R.id.menu_setting_vpn:
-                netBarePresenter.prepareVpn();
+                requestVpnPermission();
                 break;
             case R.id.menu_info:
-                Snackbar.make(v, "See http://" + NetworkUtils.getIpAddressByWifi() + ":8080", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("OK", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        }).show();
+                // 启动流量统计Web服务器
+                openTrafficStatisticsWeb();
                 break;
             case R.id.menu_install_cert:
-                installCertificate();
+                installCertificateToDownloads();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + v.getId());
@@ -275,34 +303,43 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     * 安装证书到 DOWNLOAD 目录并跳转到设置页面
+     * 安装证书到Downloads目录（修复版本）
      */
-    private void installCertificate() {
-        // 检查存储权限
-        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 请求权限
-            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-            return;
+    private void installCertificateToDownloads() {
+        // Android 10+ 使用MediaStore API，不需要特殊权限
+        // Android 9及以下需要WRITE_EXTERNAL_STORAGE权限
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        PERMISSION_REQUEST_CODE);
+                return;
+            }
         }
 
-        // 检查证书是否已生成
+        // 确保证书已生成
         if (!netBarePresenter.isJksFileGenerated()) {
-            // 如果证书未先生成，先生成证书
+            Toast.makeText(this, "正在生成证书，请稍候...", Toast.LENGTH_SHORT).show();
             netBarePresenter.prepareJks();
-            // 等待证书生成完成
+
+            // 等待证书生成
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        // 等待证书文件生成
-                        while (!netBarePresenter.isJksFileGenerated()) {
+                        int attempts = 0;
+                        while (!netBarePresenter.isJksFileGenerated() && attempts < 10) {
                             Thread.sleep(500);
+                            attempts++;
                         }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                copyCertToDownloadAndOpenSettings();
+                                if (netBarePresenter.isJksFileGenerated()) {
+                                    saveCertificateToDownloads();
+                                } else {
+                                    Toast.makeText(VPNActivity.this, "证书生成失败", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                     } catch (InterruptedException e) {
@@ -311,31 +348,88 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
                 }
             }).start();
         } else {
-            copyCertToDownloadAndOpenSettings();
+            saveCertificateToDownloads();
         }
     }
 
     /**
-     * 复制证书到 DOWNLOAD 目录并跳转到设置页面
+     * 使用CertificateSaver保存证书到Downloads
      */
-    private void copyCertToDownloadAndOpenSettings() {
+    private void saveCertificateToDownloads() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    // 先尝试使用系统KeyChain安装（推荐方式）
+                    // 获取证书文件
+                    File cacheDir = getApplicationContext().getCacheDir();
+                    File pemFile = new File(cacheDir, App.JSK_ALIAS + ".pem");
+                    File jksFile = new File(cacheDir, App.JSK_ALIAS + ".jks");
+
+                    if (!pemFile.exists()) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(VPNActivity.this, "证书文件未找到", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        return;
+                    }
+
+                    // 读取PEM证书数据
+                    byte[] certData = new byte[(int) pemFile.length()];
+                    java.io.FileInputStream fis = new java.io.FileInputStream(pemFile);
+                    fis.read(certData);
+                    fis.close();
+
+                    // 使用CertificateSaver保存
+                    CertificateSaver.SaveResult result = certificateSaver.saveCertificateToDownloads(
+                            certData,
+                            "Aether_CA",
+                            "PEM"
+                    );
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                // 使用KeyChain系统安装
-                                netBarePresenter.installJks();
-                                Toast.makeText(VPNActivity.this,
-                                    "请在弹出的系统对话框中安装证书",
-                                    Toast.LENGTH_LONG).show();
-                            } catch (Exception e) {
-                                // 如果KeyChain安装失败，使用文件保存方式
-                                saveCertToFile();
+                            if (result.isSuccess) {
+                                // 成功保存证书，显示操作指引
+                                String message = "证书已保存到:\n" + result.savedFilePath +
+                                        "\n\n即将跳转到安全设置页面，请按以下步骤操作：\n" +
+                                        "1. 点击'从存储设备安装证书'\n" +
+                                        "2. 选择名为 'Aether_CA.pem' 的证书文件\n" +
+                                        "3. 按提示完成安装";
+
+                                new android.app.AlertDialog.Builder(VPNActivity.this)
+                                    .setTitle("证书已保存")
+                                    .setMessage(message)
+                                    .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            try {
+                                                // 跳转到"加密与凭证"设置页面
+                                                Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+                                                startActivity(intent);
+                                            } catch (Exception e) {
+                                                Toast.makeText(VPNActivity.this, "无法打开设置页面: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    })
+                                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                        @Override
+                                        public void onDismiss(DialogInterface dialog) {
+                                            // 如果用户点击外部区域关闭，也尝试跳转到设置页面
+                                            try {
+                                                Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+                                                startActivity(intent);
+                                            } catch (Exception e) {
+                                                Toast.makeText(VPNActivity.this, "无法打开设置页面: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    })
+                                    .setCancelable(true)
+                                    .show();
+                            } else {
+                                Toast.makeText(VPNActivity.this, "保存失败: " + result.errorMessage, Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -344,7 +438,7 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(VPNActivity.this, "安装证书失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(VPNActivity.this, "保存失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -353,136 +447,50 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     * 保存证书到文件（备用方案）
+     * 请求VPN权限
      */
-    private void saveCertToFile() {
+    private void requestVpnPermission() {
+        VpnServiceManager.getInstance(getApplicationContext())
+            .prepareVpnPermission(this);
+    }
+
+    /**
+     * 启动VPN（修复版本）
+     */
+    private void startVpn() {
+        // 检查证书
+        JksManager jksManager = JksManager.getInstance(getApplicationContext());
+        if (!jksManager.isReady() || jksManager.getJksSafe() == null) {
+            Toast.makeText(this, "证书未准备好，正在生成...", Toast.LENGTH_SHORT).show();
+            ensureJksReady();
+            return;
+        }
+
+        // 使用VpnServiceManager启动VPN
         try {
-            // 获取证书文件
-            File cacheDir = getApplicationContext().getCacheDir();
-            File pemFile = new File(cacheDir, App.JSK_ALIAS + ".pem");
-            File p12File = new File(cacheDir, App.JSK_ALIAS + ".p12");
-            File jksFile = new File(cacheDir, App.JSK_ALIAS + ".jks");
-
-            if (!pemFile.exists()) {
-                Toast.makeText(VPNActivity.this, "证书文件未找到，请稍后重试", Toast.LENGTH_SHORT).show();
-                return;
+            Log.d("VPNActivity", "Starting VPN...");
+            vpnServiceManager.startVpn();
+            if (netBarePresenter != null) {
+                netBarePresenter.queryByUrl(null);
             }
+            Toast.makeText(this, "VPN已启动", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("VPNActivity", "启动VPN失败", e);
+            Toast.makeText(this, "启动VPN失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
 
-            // 保存到私有存储目录
-            File appDir = new File(getApplicationContext().getExternalFilesDir(null), "certificates");
-            if (!appDir.exists()) {
-                boolean created = appDir.mkdirs();
-                if (!created) {
-                    Toast.makeText(VPNActivity.this, "无法创建目录", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
-
-            // 保存多种格式的证书文件
-            File destPem = new File(appDir, "Aether_CA.pem");
-            File destCrt = new File(appDir, "Aether_CA.crt");
-            File destP12 = new File(appDir, "Aether_CA.p12");
-            File destJks = new File(appDir, "Aether_CA.jks");
-
-            // 复制文件
-            copyFileUsingStream(pemFile, destPem);
-            copyFileUsingStream(pemFile, destCrt); // CRT 格式
-            if (p12File.exists()) {
-                copyFileUsingStream(p12File, destP12);
-            }
-            if (jksFile.exists()) {
-                copyFileUsingStream(jksFile, destJks);
-            }
-
-            final String savedPath = "证书已保存到：\n" + appDir.getAbsolutePath() + "\n\n" +
-                    "包含以下格式：\n" +
-                    "- Aether_CA.pem (PEM格式)\n" +
-                    "- Aether_CA.crt (CRT格式)\n" +
-                    "- Aether_CA.p12 (PKCS12格式，如存在)\n" +
-                    "- Aether_CA.jks (JKS格式，如存在)\n\n" +
-                    "请使用任意一种格式安装证书。";
-
-            // 显示结果
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new android.app.AlertDialog.Builder(VPNActivity.this)
-                        .setTitle("证书已保存")
-                        .setMessage(savedPath)
-                        .setPositiveButton("确定", null)
-                        .setNeutralButton("打开文件夹", new android.content.DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                openFileManager(appDir);
-                            }
-                        })
-                        .show();
-                }
-            });
+    /**
+     * 停止VPN
+     */
+    private void stopVpn() {
+        try {
+            vpnServiceManager.stopVpn();
+            netBarePresenter.stopVpn();
+            Toast.makeText(this, "VPN已停止", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(VPNActivity.this, "保存失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
-
-    /**
-     * 打开文件管理器
-     */
-    private void openFileManager(File dir) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(android.net.Uri.fromFile(dir), "resource/folder");
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        try {
-            startActivity(intent);
-        } catch (Exception e) {
-            Toast.makeText(this, "无法打开文件管理器", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    /**
-     * 使用流复制文件
-     */
-    private void copyFileUsingStream(File source, File dest) throws Exception {
-        java.io.InputStream is = null;
-        java.io.OutputStream os = null;
-        try {
-            is = new java.io.FileInputStream(source);
-            os = new java.io.FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } finally {
-            if (is != null) is.close();
-            if (os != null) os.close();
-        }
-    }
-
-    /**
-     * 启动VPN（包含检查和错误处理）
-     */
-    private void startVpnWithCheck() {
-        try {
-            // 检查证书是否已生成
-            if (!netBarePresenter.isJksFileGenerated()) {
-                Toast.makeText(this, "证书未生成完成，请稍后重试", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // 配置VPN（使用startActivityForResult等待结果）
-            netBarePresenter.prepareVpn();
-
-            // 注意：prepareVpn 是异步的，实际的启动会在 onActivityResult 中处理
-            Toast.makeText(this, "正在配置VPN...", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "启动VPN失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "停止VPN失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -490,24 +498,104 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_PREPARE) {
-            if (resultCode == RESULT_OK) {
-                // VPN权限配置成功，现在可以启动VPN
-                try {
-                    netBarePresenter.startVpn();
-                    netBarePresenter.queryByUrl(null);
-                    Toast.makeText(this, "VPN已启动", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, "启动VPN失败：" + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "VPN权限配置被取消", Toast.LENGTH_SHORT).show();
+            // 处理VPN权限申请结果
+            VpnServiceManager.getInstance(getApplicationContext())
+                .handlePermissionResult(resultCode);
+
+            if (resultCode == android.app.Activity.RESULT_OK) {
+                // 权限申请成功，等待一下再启动VPN
+                new android.os.Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startVpn();
+                    }
+                }, 500);
             }
         }
     }
 
-    // 添加REQUEST_CODE常量
-    private static final int REQUEST_CODE_PREPARE = 1;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 权限被授予，重新执行安装证书操作
+                installCertificateToDownloads();
+            } else {
+                // 权限被拒绝
+                Toast.makeText(this, "需要存储权限才能保存证书到Downloads目录", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
+     * 打开流量统计Web界面
+     */
+    private void openTrafficStatisticsWeb() {
+        try {
+            // 启动HTTP服务器
+            if (!trafficHttpServer.isRunning()) {
+                trafficHttpServer.start();
+            }
+
+            String serverUrl = trafficHttpServer.getServerUrl();
+
+            // 显示访问信息对话框
+            new android.app.AlertDialog.Builder(VPNActivity.this)
+                .setTitle("流量统计Web界面")
+                .setMessage("Web服务器已启动！\n\n" +
+                        "访问地址：" + serverUrl + "\n\n" +
+                        "使用说明：\n" +
+                        "1. 确保手机和电脑在同一WiFi网络\n" +
+                        "2. 在电脑浏览器中打开上述地址\n" +
+                        "3. 可以查看详细的流量统计排行\n\n" +
+                        "功能特色：\n" +
+                        "• 按应用查看流量排行\n" +
+                        "• 按域名查看流量排行\n" +
+                        "• 最近请求记录\n" +
+                        "• 实时数据统计")
+                .setPositiveButton("在浏览器中打开", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            // 尝试跳转到浏览器
+                            Intent intent = new Intent(Intent.ACTION_VIEW, android.net.Uri.parse(serverUrl));
+                            startActivity(intent);
+                        } catch (Exception e) {
+                            Toast.makeText(VPNActivity.this, "无法打开浏览器: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .setNegativeButton("仅启动服务器", null)
+                .setNeutralButton("复制地址", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 复制地址到剪贴板
+                        android.content.ClipboardManager clipboard =
+                            (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        if (clipboard != null) {
+                            android.content.ClipData clip = android.content.ClipData.newPlainText("Traffic Stats URL", serverUrl);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(VPNActivity.this, "地址已复制到剪贴板", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .show();
+
+        } catch (Exception e) {
+            Log.e("VPNActivity", "Failed to start traffic statistics web server", e);
+            Toast.makeText(this, "启动Web服务器失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 停止HTTP服务器
+        if (trafficHttpServer != null && trafficHttpServer.isRunning()) {
+            trafficHttpServer.stop();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -548,29 +636,15 @@ public class VPNActivity extends AppCompatActivity implements View.OnClickListen
                         return true;
                     }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                netBarePresenter.queryByUrl(newText);
-                return true;
-            }
-        });
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        netBarePresenter.queryByUrl(newText);
+                        return true;
+                    }
+                });
             }
         }
         return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 100) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // 权限被授予，重新执行安装证书操作
-                installCertificate();
-            } else {
-                // 权限被拒绝
-                Toast.makeText(this, "需要存储权限才能保存证书到 DOWNLOAD 目录", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 import com.github.megatronking.netbare.NetBare;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.ssl.JKS;
+import cn.demo.appq.utils.MinRefPlanA;
 
 //import me.weishu.reflection.Reflection;
 
@@ -23,6 +24,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+         long result = MinRefPlanA.unseal(App.this);
+        //   Log.i("sanbo","MinRefPlanA.unseal result: " + result);
         // 创建自签证书
         mJKS = new JKS(this, JSK_ALIAS, JSK_ALIAS.toCharArray(), JSK_ALIAS, JSK_ALIAS,
                 JSK_ALIAS, JSK_ALIAS, JSK_ALIAS);
@@ -32,6 +35,13 @@ public class App extends Application {
 
     public static JKS getJKS() {
         return mJKS;
+    }
+
+    /**
+     * 设置JKS实例 - 供JksManager使用以确保两个管理器使用同一个实例
+     */
+    public static void setJKS(JKS jks) {
+        mJKS = jks;
     }
 
     @Override
