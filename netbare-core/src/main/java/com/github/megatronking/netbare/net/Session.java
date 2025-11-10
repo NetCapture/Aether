@@ -68,6 +68,11 @@ public final class Session {
     public int uid;
 
     /**
+     * The application name that the session belongs to.
+     */
+    public String appName;
+
+    /**
      * Packet counts.
      */
     public int packetIndex;

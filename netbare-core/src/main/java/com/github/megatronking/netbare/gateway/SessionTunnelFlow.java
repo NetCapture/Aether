@@ -98,4 +98,13 @@ public abstract class SessionTunnelFlow implements TunnelFlow {
         return mSession.protocol;
     }
 
+    /**
+     * Returns the application name that the session belongs to.
+     *
+     * @return The application name or null if not available.
+     */
+    public String appName() {
+        return mSession.appName;
+    }
+
 }

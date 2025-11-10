@@ -92,6 +92,11 @@ public class HttpRequest extends Request {
         return mRequest.host();
     }
 
+    @Override
+    public String appName() {
+        return mRequest.appName();
+    }
+
     /**
      * Returns the request method for this request.
      *

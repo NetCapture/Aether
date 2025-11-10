@@ -82,10 +82,12 @@ public class NetHttpInject implements HttpInjector {
             }
         } else {
             String packagename = App.getProcessNameByUid(request.uid());
+            String appName = request.appName() != null ? request.appName() : AppUtils.getAppName(packagename);
+            Log.d(TAG, "Create ReqEntity: uid=" + request.uid() + ", appName=" + appName + ", packagename=" + packagename);
             ReqEntity reqEntity = new ReqEntity(
                     null,
                     request.id(),
-                    AppUtils.getAppName(packagename),
+                    appName,
                     packagename,
                     AppUtils.getAppVersionName(packagename),
                     String.valueOf(AppUtils.getAppVersionCode(packagename)),

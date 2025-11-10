@@ -18,6 +18,7 @@ package com.github.megatronking.netbare.net;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 
+import com.github.megatronking.netbare.NetBare;
 import com.github.megatronking.netbare.NetBareConfig;
 import com.github.megatronking.netbare.NetBareUtils;
 import com.github.megatronking.netbare.ip.Protocol;
@@ -83,12 +84,14 @@ public final class UidDumper {
             int uid = mUidProvider.uid(session);
             if (uid != UidProvider.UID_UNKNOWN) {
                 session.uid = uid;
+                String appName = resolveAppName(uid);
+                if (appName != null) {
+                    session.appName = appName;
+                    // Debug log
+                    android.util.Log.d("NetBareUidDumper", "UidProvider: UID=" + uid + ", AppName=" + appName);
+                }
                 return;
             }
-        }
-        // Android Q abandons the access permission.
-        if (NetBareUtils.isAndroidQ()) {
-            return;
         }
         final int port = NetBareUtils.convertPort(session.localPort);
         try {
@@ -111,9 +114,23 @@ public final class UidDumper {
             });
             if (net != null) {
                 session.uid = net.uid;
+                String appName = resolveAppName(net.uid);
+                if (appName != null) {
+                    session.appName = appName;
+                    // Debug log
+                    android.util.Log.d("NetBareUidDumper", "ProcNet: UID=" + net.uid + ", AppName=" + appName);
+                }
             }
         } catch (ExecutionException e) {
-            // Not find the uid
+            // /proc/net failed, try PackageManager as fallback
+            if (session.uid != UidProvider.UID_UNKNOWN) {
+                String appName = resolveAppName(session.uid);
+                if (appName != null) {
+                    session.appName = appName;
+                    // Debug log
+                    android.util.Log.d("NetBareUidDumper", "PackageManager: UID=" + session.uid + ", AppName=" + appName);
+                }
+            }
         }
     }
 
@@ -192,6 +209,40 @@ public final class UidDumper {
             return NetBareUtils.parseInt(port, 16, -1);
         }
 
+    }
+
+    private String resolveAppName(int uid) {
+        if (uid <= 0) return null;
+        try {
+            String packageName = getPackageNameByUid(uid);
+            if (packageName != null) {
+                android.content.Context context = NetBare.get().getApplication();
+                if (context != null) {
+                    android.content.pm.ApplicationInfo appInfo = context.getPackageManager()
+                        .getApplicationInfo(packageName, 0);
+                    CharSequence appLabel = context.getPackageManager()
+                        .getApplicationLabel(appInfo);
+                    return appLabel != null ? appLabel.toString() : packageName;
+                }
+            }
+        } catch (Exception e) {
+            // Silent failure
+        }
+        return null;
+    }
+
+    private String getPackageNameByUid(int uid) {
+        try {
+            android.content.Context context = NetBare.get().getApplication();
+            if (context == null) return null;
+            String[] packages = context.getPackageManager().getPackagesForUid(uid);
+            if (packages != null && packages.length > 0) {
+                return packages[0];
+            }
+        } catch (Exception e) {
+            // Silent failure
+        }
+        return null;
     }
 
 }

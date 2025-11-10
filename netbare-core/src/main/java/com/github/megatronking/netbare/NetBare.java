@@ -154,6 +154,15 @@ public final class NetBare {
         return mNetBareConfig;
     }
 
+    /**
+     * Get the application instance.
+     *
+     * @return The application instance or null if not attached.
+     */
+    public Application getApplication() {
+        return mApp;
+    }
+
     /* package */ VirtualGatewayFactory getGatewayFactory() {
         // Make sure the virtual gateway not be null.
         return mNetBareConfig.gatewayFactory == null ? DefaultVirtualGatewayFactory.create() :
