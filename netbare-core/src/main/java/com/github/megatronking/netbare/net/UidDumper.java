@@ -123,13 +123,18 @@ public final class UidDumper {
             }
         } catch (ExecutionException e) {
             // /proc/net failed, try PackageManager as fallback
-            if (session.uid != UidProvider.UID_UNKNOWN) {
+            // session.uid may be 0 (default) or UidProvider.UID_UNKNOWN (-1)
+            if (session.uid > 0) {
                 String appName = resolveAppName(session.uid);
                 if (appName != null) {
                     session.appName = appName;
                     // Debug log
                     android.util.Log.d("NetBareUidDumper", "PackageManager: UID=" + session.uid + ", AppName=" + appName);
+                } else {
+                    android.util.Log.w("NetBareUidDumper", "Failed to resolve app name for UID=" + session.uid);
                 }
+            } else {
+                android.util.Log.w("NetBareUidDumper", "UID is invalid: " + session.uid);
             }
         }
     }

@@ -4,7 +4,6 @@ import android.util.Log;
 
 import android.database.Cursor;
 
-import org.greenrobot.greendao.query.Query;
 import fi.iki.elonen.NanoHTTPD;
 
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.List;
 
 import cn.demo.appq.entity.ReqEntity;
 import cn.demo.appq.greendao.ReqEntityDao;
+import cn.demo.appq.greendao.ReqEntityDao.Query;
 
 /**
  * 流量统计HTTP服务器
@@ -161,12 +161,12 @@ public class TrafficHttpServer {
          */
         private Response serveAppTrafficRank(int limit) {
             try {
-                ReqEntityDao dao = DBManager.getInstance().getReqEntityDao();
+                ReqEntityDao dao = DBManager.getReqEntityDao();
                 StringBuilder json = new StringBuilder();
                 json.append("{\"data\":[");
 
                 // 使用原生SQL查询视图
-                Cursor cursor = dao.getDatabase().rawQuery(
+                Cursor cursor = DBManager.rawQuery(
                     "SELECT app_name, req_count, usage_net, begin_time FROM APP_USAGE_TRAFFIC_RANK LIMIT ?",
                     new String[]{String.valueOf(limit)}
                 );
@@ -215,8 +215,7 @@ public class TrafficHttpServer {
                 StringBuilder json = new StringBuilder();
                 json.append("{\"data\":[");
 
-                Cursor cursor = DBManager.getInstance().getDatabase()
-                    .rawQuery("SELECT host, COUNT(*) as req_count, SUM(LENGTH) as usage_net FROM NETWORK_REQUEST_DETAILED GROUP BY host ORDER BY SUM(LENGTH) DESC LIMIT ?",
+                Cursor cursor = DBManager.rawQuery("SELECT host, COUNT(*) as req_count, SUM(LENGTH) as usage_net FROM NETWORK_REQUEST_DETAILED GROUP BY host ORDER BY SUM(LENGTH) DESC LIMIT ?",
                         new String[]{String.valueOf(limit)});
 
                 boolean first = true;
@@ -258,8 +257,7 @@ public class TrafficHttpServer {
          */
         private Response serveUrlTrafficRank(int limit) {
             try {
-                Cursor cursor = DBManager.getInstance().getDatabase()
-                    .rawQuery("SELECT URL, COUNT(*) as req_count, SUM(LENGTH) as usage_net, APP_NAME FROM NETWORK_REQUEST_DETAILED GROUP BY URL ORDER BY SUM(LENGTH) DESC LIMIT ?",
+                Cursor cursor = DBManager.rawQuery("SELECT URL, COUNT(*) as req_count, SUM(LENGTH) as usage_net, APP_NAME FROM NETWORK_REQUEST_DETAILED GROUP BY URL ORDER BY SUM(LENGTH) DESC LIMIT ?",
                         new String[]{String.valueOf(limit)});
 
                 boolean first = true;
@@ -306,7 +304,7 @@ public class TrafficHttpServer {
          */
         private Response serveRequestDetails(int offset, int limit) {
             try {
-                ReqEntityDao dao = DBManager.getInstance().getReqEntityDao();
+                ReqEntityDao dao = DBManager.getReqEntityDao();
                 Query<ReqEntity> query = dao.queryBuilder()
                     .orderDesc(ReqEntityDao.Properties.Time)
                     .offset(offset)
@@ -374,11 +372,10 @@ public class TrafficHttpServer {
         private Response serveSummaryStats() {
             try {
                 // 获取总请求数
-                long totalRequests = DBManager.getInstance().getReqEntityDao().queryBuilder().count();
+                long totalRequests = DBManager.getReqEntityDao().queryBuilder().count();
 
                 // 获取总流量
-                Cursor cursor = DBManager.getInstance().getDatabase()
-                    .rawQuery("SELECT SUM(LENGTH) FROM NETWORK_REQUEST_DETAILED", null);
+                Cursor cursor = DBManager.rawQuery("SELECT SUM(LENGTH) FROM NETWORK_REQUEST_DETAILED", null);
                 long totalTraffic = 0;
                 if (cursor.moveToFirst() && !cursor.isNull(0)) {
                     totalTraffic = cursor.getLong(0);
@@ -386,8 +383,7 @@ public class TrafficHttpServer {
                 cursor.close();
 
                 // 获取不同应用数
-                Cursor cursor2 = DBManager.getInstance().getDatabase()
-                    .rawQuery("SELECT COUNT(DISTINCT APP_NAME) FROM NETWORK_REQUEST_DETAILED", null);
+                Cursor cursor2 = DBManager.rawQuery("SELECT COUNT(DISTINCT APP_NAME) FROM NETWORK_REQUEST_DETAILED", null);
                 long appCount = 0;
                 if (cursor2.moveToFirst() && !cursor2.isNull(0)) {
                     appCount = cursor2.getLong(0);

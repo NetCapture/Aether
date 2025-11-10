@@ -1,19 +1,11 @@
 apply plugin: 'com.android.application'
-apply plugin: 'org.greenrobot.greendao' // 应用插件
-greendao {
-    // 指定数据库schema版本号，迁移等操作会用到
-    schemaVersion 2
-    // 设置生成数据库文件的目录，默认是在build中，可以将生成的文件放到我们的java目录中
-    targetGenDir 'src/main/java'
-    // 设置生成的数据库相关文件的包名，默认为entity所在的包名
-    daoPackage 'cn.demo.appq.greendao'
-}
+// apply plugin: 'org.greenrobot.greendao' // Gradle 8.x 兼容性问题，已移除
 
 android {
+    namespace 'cn.demo.appq'
     compileSdkVersion 34
-    buildToolsVersion "34.0.0"
     defaultConfig {
-        applicationId "com.good.vpn"
+        applicationId "cn.demo.appq"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
@@ -26,12 +18,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     aaptOptions {
         cruncherEnabled = false
-        useNewCruncher = false
+        // useNewCruncher已过时，新版本中始终启用
     }
     lintOptions {
         checkReleaseBuilds false
@@ -49,6 +41,15 @@ android {
     }
 }
 
+// greendao {
+//     // 指定数据库schema版本号，迁移等操作会用到
+//     schemaVersion 2
+//     // 设置生成数据库文件的目录，默认是在build中，可以将生成的文件放到我们的java目录中
+//     targetGenDir 'src/main/java'
+//     // 设置生成的数据库相关文件的包名，默认为entity所在的包名
+//     daoPackage 'cn.demo.appq.greendao'
+// }
+
 tasks.withType(Javadoc) {
     options.addStringOption('Xdoclint:none', '-quiet')
     options.addStringOption('encoding', 'UTF-8')
@@ -62,7 +63,7 @@ dependencies {
     implementation project(':netbare-core')
     implementation project(':netbare-injector')
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'org.greenrobot:greendao:3.3.0'
+    // implementation 'org.greenrobot:greendao:3.3.0' // Gradle 8.x 兼容性问题，已移除
     implementation 'com.blankj:utilcodex:1.25.8'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.10.0'

@@ -57,7 +57,7 @@ public class TrafficListActivity extends AppCompatActivity {
 
         // 初始化
         packageManager = getPackageManager();
-        dao = DBManager.getInstance().getReqEntityDao();
+        dao = DBManager.getReqEntityDao();
 
         // 设置RecyclerView
         recyclerView = findViewById(R.id.recycler_view);

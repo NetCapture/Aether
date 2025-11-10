@@ -95,8 +95,8 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
             return;
         }
         long id = intent.getExtras().getLong("id");
-        DBManager.getInstance().getReqEntityDao().detachAll();
-        ReqEntity entity = DBManager.getInstance().getReqEntityDao().loadByRowId(id);
+        DBManager.getReqEntityDao().detachAll();
+        ReqEntity entity = DBManager.getReqEntityDao().loadByRowId(id);
         if (entity == null) {
             return;
         }
@@ -185,11 +185,10 @@ public class DescriptionActivity extends AppCompatActivity implements MenuItem.O
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_nil:
-                DecoderHandler.focusDecoder(DecoderHandler.DEFAULT);
-                break;
-            default:
+        int itemId = item.getItemId();
+        
+        if (itemId == R.id.action_nil) {
+            DecoderHandler.focusDecoder(DecoderHandler.DEFAULT);
         }
         newIntent(getIntent());
         return true;

@@ -1,5 +1,6 @@
 package cn.demo.appq.Interceptor;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ import java.util.List;
 import cn.demo.appq.App;
 import cn.demo.appq.entity.ReqEntity;
 import cn.demo.appq.greendao.ReqEntityDao;
+import cn.demo.appq.utils.AppNameResolver;
 import cn.demo.appq.utils.DBManager;
 import cn.demo.appq.utils.IOUtils;
 
@@ -53,8 +55,7 @@ public class NetHttpInject implements HttpInjector {
 
     @Override
     public void onRequestInject(@NonNull HttpRequest request, @NonNull HttpBody body, @NonNull InjectorCallback callback) throws IOException {
-        List<ReqEntity> reqEntities = DBManager.getInstance()
-                .getReqEntityDao()
+        List<ReqEntity> reqEntities = DBManager.getReqEntityDao()
                 .queryBuilder()
                 .where(ReqEntityDao.Properties.SessionId.eq(request.id()))
                 .list();
@@ -74,16 +75,34 @@ public class NetHttpInject implements HttpInjector {
                 if(newBuffer.limit() >= MAX_CONTENT_SIZE){
                     // 数据量超过SQLite单行最大容量，不再记录，但允许请求继续
                     Log.w(TAG, "Request content exceeds maximum size, skipping record: " + request.id());
-                    DBManager.getInstance().getReqEntityDao().update(entity);
+                    DBManager.getReqEntityDao().update(entity);
                 } else {
                     entity.setReqContent(IOUtils.byteBuffer2String(newBuffer));
-                    DBManager.getInstance().getReqEntityDao().update(entity);
+                    DBManager.getReqEntityDao().update(entity);
                 }
             }
         } else {
-            String packagename = App.getProcessNameByUid(request.uid());
-            String appName = request.appName() != null ? request.appName() : AppUtils.getAppName(packagename);
-            Log.d(TAG, "Create ReqEntity: uid=" + request.uid() + ", appName=" + appName + ", packagename=" + packagename);
+            int uid = request.uid();
+            String packagename = App.getProcessNameByUid(uid);
+            
+            // 优先使用request中的appName，如果没有则通过AppNameResolver获取
+            String appName = request.appName();
+            if (TextUtils.isEmpty(appName)) {
+                appName = AppNameResolver.getAppNameByUid(uid);
+            }
+            
+            // 如果仍然为空，使用AppUtils作为最后的备选方案
+            if (TextUtils.isEmpty(appName)) {
+                appName = AppUtils.getAppName(packagename);
+            }
+            
+            Log.d(TAG, "=== Create ReqEntity Debug ===");
+            Log.d(TAG, "uid=" + uid);
+            Log.d(TAG, "packagename=" + packagename);
+            Log.d(TAG, "request.appName()=" + request.appName());
+            Log.d(TAG, "AppNameResolver.getAppNameByUid()=" + AppNameResolver.getAppNameByUid(uid));
+            Log.d(TAG, "final appName=" + appName);
+            Log.d(TAG, "============================");
             ReqEntity reqEntity = new ReqEntity(
                     null,
                     request.id(),
@@ -117,15 +136,14 @@ public class NetHttpInject implements HttpInjector {
                     NetworkUtils.getNetworkType().name(),
                     request.requestBodyOffset(),
                     0);
-            DBManager.getInstance().getReqEntityDao().insert(reqEntity);
+            DBManager.getReqEntityDao().insert(reqEntity);
         }
         callback.onFinished(body);
     }
 
     @Override
     public void onResponseInject(@NonNull HttpResponse response, @NonNull HttpBody body, @NonNull InjectorCallback callback) throws IOException {
-        List<ReqEntity> reqEntities = DBManager.getInstance()
-                .getReqEntityDao()
+        List<ReqEntity> reqEntities = DBManager.getReqEntityDao()
                 .queryBuilder()
                 .where(ReqEntityDao.Properties.SessionId.eq(response.id()))
                 .list();
@@ -156,7 +174,7 @@ public class NetHttpInject implements HttpInjector {
             entity.setIsWebSocket(response.isWebSocket());
             entity.setIndex(0);
             entity.setLength(entity.getLength() + body.toBuffer().limit());
-            DBManager.getInstance().getReqEntityDao().update(entity);
+            DBManager.getReqEntityDao().update(entity);
         }
         callback.onFinished(body);
     }

@@ -1,52 +1,41 @@
 package cn.demo.appq.utils;
 
+import android.database.Cursor;
 
-import com.blankj.utilcode.util.Utils;
+import cn.demo.appq.greendao.ReqEntityDao;
 
-import org.greenrobot.greendao.database.Database;
-
-import cn.demo.appq.greendao.DaoMaster;
-import cn.demo.appq.greendao.DaoSession;
-
+/**
+ * 临时 Mock DBManager，用于编译
+ * TODO: 需要选择替代 GreenDAO 的数据库方案
+ */
 public class DBManager {
-    private static volatile DaoSession instance = null;
+    private static volatile ReqEntityDao reqEntityDao = null;
 
     private DBManager() {
     }
 
-    public static DaoSession getInstance() {
-        if (instance == null) {
+    public static ReqEntityDao getReqEntityDao() {
+        if (reqEntityDao == null) {
             synchronized (DBManager.class) {
-                if (instance == null) {
-                    Database db = new DaoMaster.DevOpenHelper(Utils.getApp(), "log_db").getWritableDb();
-                    DaoMaster daoMaster = new DaoMaster(db);
-                    //汇总APP使用流量排行
-                    daoMaster.getDatabase().execSQL(
-                           "CREATE VIEW IF NOT EXISTS APP_USAGE_TRAFFIC_RANK \n" +
-                                   "AS\n" +
-                                   "SELECT APP_NAME AS app_name," +
-                                   "COUNT(*) AS req_count, " +
-                                   "SUM(LENGTH) AS usage_net," +
-                                   "MIN(TIME) AS begin_time\n" +
-                                   "FROM NETWORK_REQUEST_DETAILED \n" +
-                                   "GROUP BY APP_NAME \n" +
-                                   "ORDER BY SUM(LENGTH) DESC;");
-                    daoMaster.getDatabase().execSQL(
-                           "CREATE VIEW IF NOT EXISTS [HOST_USAGE_TRAFFIC_RANK]\n" +
-                                   "AS\n" +
-                                   "SELECT \n" +
-                                   "       APP_NAME AS app_name, \n" +
-                                   "       HOST AS host, \n" +
-                                   "       COUNT(*) AS req_count, \n" +
-                                   "       SUM(LENGTH)  AS usage_net, \n" +
-                                   "       MIN(TIME) AS begin_time\n" +
-                                   "FROM   NETWORK_REQUEST_DETAILED\n" +
-                                   "GROUP  BY HOST\n" +
-                                   "ORDER  BY SUM(LENGTH) DESC;");
-                    instance = daoMaster.newSession();
+                if (reqEntityDao == null) {
+                    // TODO: 暂时返回空实现，后续需要选择替代数据库方案
+                    reqEntityDao = new ReqEntityDao(null);
                 }
             }
         }
-        return instance;
+        return reqEntityDao;
+    }
+
+    public static ReqEntityDao getInstance() {
+        return getReqEntityDao();
+    }
+
+    // Mock database methods
+    public static Cursor getDatabase() {
+        return null;
+    }
+
+    public static Cursor rawQuery(String sql, String[] args) {
+        return null;
     }
 }

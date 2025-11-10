@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'com.github.megatronking.netbare.injector'
     compileSdkVersion 34
 
     defaultConfig {
@@ -16,18 +17,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dexOptions {
-        preDexLibraries false
-        maxProcessCount 8
-        javaMaxHeapSize "4g"
-    }
+    // dexOptions已过时，Android Gradle Plugin 8.0+会自动优化dexing
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     aaptOptions {
         cruncherEnabled = false
-        useNewCruncher = false
+        // useNewCruncher已过时，新版本中始终启用
     }
     lintOptions {
         checkReleaseBuilds false
@@ -49,5 +46,5 @@ tasks.withType(Javadoc) {
 
 dependencies {
     implementation project(':netbare-core')
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
 }

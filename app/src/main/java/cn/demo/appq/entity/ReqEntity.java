@@ -1,16 +1,10 @@
 package cn.demo.appq.entity;
 
-
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
-
 /**
- *
+ * 网络请求实体类
+ * 移除了 GreenDAO 注解，使用临时实现
  */
-@Entity(nameInDb = "NETWORK_REQUEST_DETAILED")
 public class ReqEntity {
-    @Id(autoincrement = true)
     private Long id;
     private String sessionId;
     private String appName;
@@ -44,7 +38,6 @@ public class ReqEntity {
     private int requestBodyOffset;
     private int responseBodyOffset;
 
-    @Generated(hash = 16580686)
     public ReqEntity(Long id, String sessionId, String appName, String appPackage,
             String appVersion, String appVersionCode, String url, String host, Integer port,
             Integer index, String ip, String protocol, String httpProtocol, String method,
@@ -87,7 +80,6 @@ public class ReqEntity {
         this.responseBodyOffset = responseBodyOffset;
     }
 
-    @Generated(hash = 1573136)
     public ReqEntity() {
     }
 

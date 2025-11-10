@@ -155,29 +155,25 @@ public class NetBarePresenter implements BasePresenter {
         }
         List<ReqEntity> data = new ArrayList<>();
         //略过缓存，保证取到的数据是最新的
-        DBManager.getInstance().getReqEntityDao().detachAll();
+        DBManager.getReqEntityDao().detachAll();
         if (TextUtils.isEmpty(query)) {
-            data.addAll(DBManager.getInstance()
-                    .getReqEntityDao()
+            data.addAll(DBManager.getReqEntityDao()
                     .queryBuilder().orderDesc(ReqEntityDao.Properties.Id).list());
         } else {
             //URL 匹配搜索
-            data.addAll(DBManager.getInstance()
-                    .getReqEntityDao()
+            data.addAll(DBManager.getReqEntityDao()
                     .queryBuilder()
                     .where(ReqEntityDao.Properties.Url.like("%" + query + "%"))
                     .orderDesc(ReqEntityDao.Properties.Id)
                     .list());
             //应用名匹配搜索
-            data.addAll(DBManager.getInstance()
-                    .getReqEntityDao()
+            data.addAll(DBManager.getReqEntityDao()
                     .queryBuilder()
                     .where(ReqEntityDao.Properties.AppName.like("%" + query + "%"))
                     .orderDesc(ReqEntityDao.Properties.Id)
                     .list());
             //包名匹配搜索
-            data.addAll(DBManager.getInstance()
-                    .getReqEntityDao()
+            data.addAll(DBManager.getReqEntityDao()
                     .queryBuilder()
                     .where(ReqEntityDao.Properties.AppPackage.like("%" + query + "%"))
                     .orderDesc(ReqEntityDao.Properties.Id)
